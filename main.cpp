@@ -2,45 +2,38 @@
 #include "cor.h"
 #include "vetor.h"
 #include "raio.h"
+#include "esfera.h"
 #include <cmath>
 
 using namespace std;
 
-auto posicao_luz = ponto(0,5,0);
-auto intensidade_luz = 0.5;
-auto intensidade_luz_ambiente = 0.3;
+auto posicao_luz1 = ponto(0,5,0);
+auto intensidade_luz = 0.7;
+auto expoente_especular = 1000;
 
-pair<double,double> calcular_raizes(const ponto& centro_esfera, double raio_esfera, const raio& r){
-  vetor p = r.origem() - centro_esfera;
-
-  auto a = produto_vetor(r.direcao(),r.direcao());
-  auto b = 2.0 * produto_vetor(p, r.direcao());
-  auto c = produto_vetor(p, p) - raio_esfera*raio_esfera;
-
-  auto descriminante = b*b - 4*a*c;
-  if(descriminante < 0){
-    return {INFINITY,INFINITY};
-  }
-
-  auto t1 = (-b + sqrt(descriminante)) / (2*a);
-  auto t2 = (-b - sqrt(descriminante)) / (2*a);
-  return {t1,t2};
-}
-
-double calcular_intensidade_difusa_esfera(const raio& direcao_luz, const ponto& centro_esfera, double raiz_mais_proxima){
+double calcular_intensidade_luz_esfera(const raio& direcao_luz, const ponto& centro_esfera, double raiz_mais_proxima, const ponto& posicao_luz, const int exp_especular){
   double i = 0;
 
   auto p_int = direcao_luz.origem() + raiz_mais_proxima*direcao_luz.direcao();
 
-  auto normal_esfera = p_int - centro_esfera;
+  auto vetor_normal_esfera = p_int - centro_esfera;
   auto L = posicao_luz - p_int;
+  auto normal_esfera = vetor_normal_esfera/vetor_normal_esfera.comprimento();
   auto n_dot_l = produto_vetor(normal_esfera/normal_esfera.comprimento(),L);
 
   if(n_dot_l > 0){
-    i = intensidade_luz * n_dot_l  / (normal_esfera.comprimento() * L.comprimento()) ;
+    i += intensidade_luz * n_dot_l  / (normal_esfera.comprimento() * L.comprimento()) ;
   }
 
-  return i + intensidade_luz_ambiente;
+  if(exp_especular != -1){
+    auto R = 2*normal_esfera*n_dot_l - L;
+    auto r_dot_l = produto_vetor(R,-direcao_luz.direcao());
+    if(r_dot_l > 0){
+      i += intensidade_luz * pow(r_dot_l/(R.comprimento()*L.comprimento()),exp_especular);
+    }
+  }
+
+  return i;
 
 }
 
@@ -78,12 +71,13 @@ int main() {
 
         //Raio que sai da origem para o pixel
         raio r(origem, ponto(x,y,-dJanela));
+        esfera e1(centro_esfera, raio_esfera);
 
-        //Calcula as raizes e verifica se há interseção entre o raio e a esfera
-        auto raizes = calcular_raizes(centro_esfera,raio_esfera,r);
+        //Calcula as raizes, verifica se há interseção entre o raio e a esfera e retorna o par de raízes se houver
+        auto raizes = e1.calcular_raizes_intersecao(r);
         
         if(!isinf(raizes.first) && !isinf(raizes.second)){
-          auto intensidade_luz_difusa = calcular_intensidade_difusa_esfera(r,centro_esfera,min(raizes.first,raizes.second));
+          auto intensidade_luz_difusa = calcular_intensidade_luz_esfera(r,centro_esfera,min(raizes.first,raizes.second), posicao_luz1, expoente_especular);
           cor_pixel = cor(255,0,0) * intensidade_luz_difusa;
         }
         else{

@@ -1,0 +1,5 @@
+#Image ppm generated
+*.ppm
+
+#Compiled code
+main

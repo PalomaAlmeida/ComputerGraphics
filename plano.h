@@ -13,10 +13,11 @@ class Plano: public Objeto{
     public:
         Plano(){}
         Plano(const ponto& pont_especific, const vetor& normal_plano) : ponto_especific(pont_especific), normal(normal_plano){}
+        Plano(const ponto& pont_especific, const vetor& normal_plano, const Cor& cor) : ponto_especific(pont_especific), normal(normal_plano), cor_plano(cor){}
 
         ponto pont_especific() const {return ponto_especific;}
         vetor normal_plano() const { return normal;}
-        Cor getCor() override {return Cor(0,255,0);}
+        Cor getCor() override {return cor_plano;}
 
         ponto calcula_plano(ponto ponto_qualquer) const {
             return (ponto_qualquer - ponto_especific) * normal;
@@ -39,15 +40,14 @@ class Plano: public Objeto{
             ponto p = direcao_luz.origem() + t*direcao_luz.direcao();
 
             auto L = ponto_luz.posicao_ponto()- p;
-            auto normal_plano = normal/normal.comprimento();
-            auto n_dot_l = produto_vetor(normal_plano/normal_plano.comprimento(),L);
+            auto n_dot_l = produto_vetor(normal/normal.comprimento(),L);
 
             Raio p_int(p,L);
-            pair<Objeto*, double> plano_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1);
-            if(plano_sombra.second != INFINITY){return luz_ambiente;}
+            bool plano_possui_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1).second != INFINITY;
+            if(plano_possui_sombra){return luz_ambiente;}
 
             if(n_dot_l > 0){
-                i += ponto_luz.intensidade_luz() * n_dot_l  / (normal.comprimento() * L.comprimento()) ;
+                i += ponto_luz.intensidade_luz() * (n_dot_l  / (normal.comprimento() * L.comprimento()));
             }
 
             if(exp_especular != -1){
@@ -57,12 +57,13 @@ class Plano: public Objeto{
                     i += ponto_luz.intensidade_luz() * pow(r_dot_l/(R.comprimento()*L.comprimento()),exp_especular);
                 }
             }
-            return i;
+            return min(i + luz_ambiente,1.0);
         };
 
     public:
         ponto ponto_especific;
         vetor normal;
+        Cor cor_plano;
 
 };
 

@@ -10,23 +10,22 @@
 
 using namespace std;
 
+list<Objeto*> Objeto::objetos = list<Objeto*>();
+
 auto posicao_luz1 = ponto(0,0.6,-0.3);
 auto intensidade_luz = 0.7;
 auto intensidade_luz_ambiente = 0.3;
-list<Objeto*> Objeto::objetos = list<Objeto*>();
-
 luz_pontual luz1(posicao_luz1, intensidade_luz);
 
 list<luz_pontual> luzes;
 
-
 auto expoente_especular = 10;
+
 Cor calcular_cor_pixel(Objeto* objeto_mais_proximo, double raiz_mais_proxima, Raio& r, double luz_ambiente){
   Cor cor_pixel;
-  double intensidade_luz_difusa;
     
   if(!isinf(raiz_mais_proxima)){
-    intensidade_luz_difusa = objeto_mais_proximo->calcular_intensidade_luz(r,raiz_mais_proxima, luz1, expoente_especular, luz_ambiente);
+    double intensidade_luz_difusa = objeto_mais_proximo->calcular_intensidade_luz(r,raiz_mais_proxima, luz1, expoente_especular, luz_ambiente);
     cor_pixel = objeto_mais_proximo->getCor() * intensidade_luz_difusa;
   }
   else{
@@ -57,11 +56,11 @@ int main() {
     auto origem = ponto(0, 0, 0);
 
     double raio_esfera1 = 0.4;
-    auto centro_esfera1 = (ponto(0,0,-1));  
+    auto centro_esfera1 = ponto(0,0,-1);  
 
-    Objeto::objetos.push_back( new Esfera(centro_esfera1, raio_esfera1));
-    Objeto::objetos.push_back( new Plano(ponto(0,-0.4,0), vetor(0,1,0)));
-    Objeto::objetos.push_back( new Plano(ponto(0,0,-2), vetor(0,0,1)));
+    Objeto::objetos.push_back( new Esfera(centro_esfera1, raio_esfera1, Cor(255,0,0)));
+    Objeto::objetos.push_back( new Plano(ponto(0,-0.4,0), vetor(0,1,0), Cor(100,75,255)));
+    Objeto::objetos.push_back( new Plano(ponto(0,0,-2), vetor(0,0,1), Cor(255,20,50)));
 
     for (int j = 0; j < altura_imagem; ++j) {
       for (int i = 0; i < largura_imagem; ++i) { 
@@ -72,20 +71,11 @@ int main() {
 
         //Raio que sai da origem para o pixel
         Raio r(origem, ponto(x,y,-dJanela));
-        Cor cor_pixel;
 
         //Calcula as raizes, verifica se há interseção entre o raio e as esferas e retorna a cor do pixel
-        /*double plano_intercepta = plano1.calcula_intersecao(r);
-
-        if(plano_intercepta != INFINITY ){
-          cor_pixel = cor(0,255,0) * plano1.calcular_luz_plano(r,plano_intercepta,luz1,expoente_especular);
-        }
-        else{
-          cor_pixel = cor(100,100,100);
-        }*/
 
         pair<Objeto*,double> objeto_e_raiz_mais_proximas = Objeto::calcular_objeto_mais_proximo_intersecao(r,1.0,(double) INFINITY);
-        cor_pixel = calcular_cor_pixel(objeto_e_raiz_mais_proximas.first, objeto_e_raiz_mais_proximas.second, r, intensidade_luz_ambiente);
+        Cor cor_pixel = calcular_cor_pixel(objeto_e_raiz_mais_proximas.first, objeto_e_raiz_mais_proximas.second, r, intensidade_luz_ambiente);
 
         pintar(std::cout, cor_pixel);
       }

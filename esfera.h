@@ -4,20 +4,22 @@
 #include "raio.h"
 #include "vetor.h"
 #include "luz_pontual.h"
+#include "objeto.h"
 #include <cmath>
 #include <list>
 
 using namespace std;
 
-class Esfera{
+class Esfera: public Objeto{
     public:
         Esfera(){}
         Esfera(const ponto& centro, const double raio): centro(centro), raio(raio){}
 
         ponto centro_esfera() {return centro;}
         double raio_esfera() { return raio; }
+        Cor getCor() override { return Cor(255,0,0);}
 
-        pair<double,double> calcular_raizes_intersecao(const Raio& r){
+        pair<double,double> calcular_intersecao(const Raio& r) override{
             vetor p = r.origem() - centro_esfera();
 
             auto a = produto_vetor(r.direcao(),r.direcao());
@@ -34,8 +36,7 @@ class Esfera{
             return {t1,t2};
         }
 
-        double calcular_intensidade_luz_esfera(list<Esfera> esferas, const Raio& direcao_luz, double raiz_mais_proxima, const luz_pontual& ponto_luz, int exp_especular, double luz_ambiente){
-            
+        double calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima, const luz_pontual& ponto_luz, int exp_especular, double luz_ambiente) override{
             double i = 0;
             ponto p = direcao_luz.origem() + raiz_mais_proxima*direcao_luz.direcao();
 
@@ -45,9 +46,9 @@ class Esfera{
             auto n_dot_l = produto_vetor(normal_esfera/normal_esfera.comprimento(),L);
 
             Raio p_int(p,L);
-            pair<Esfera, double> esfera_e_raizes_sombra = calcular_raiz_mais_proxima_interseccao(esferas,p_int,0.001,1);
-            //cout << "Entrou aqui: " << esfera_e_raizes_sombra.second << "\n";
-            if(esfera_e_raizes_sombra.second != INFINITY){return luz_ambiente;}
+            pair<Objeto*, double> objeto_e_raizes_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1);
+
+            if(objeto_e_raizes_sombra.second != INFINITY){return luz_ambiente;}
 
             if(n_dot_l > 0){
                 i += ponto_luz.intensidade_luz() * n_dot_l  / (normal_esfera.comprimento() * L.comprimento()) ;
@@ -57,7 +58,7 @@ class Esfera{
                 auto R = 2*normal_esfera*n_dot_l - L;
                 auto r_dot_l = produto_vetor(R,-direcao_luz.direcao());
                 if(r_dot_l > 0){
-                i += ponto_luz.intensidade_luz() * pow(r_dot_l/(R.comprimento()*L.comprimento()),exp_especular);
+                    i += ponto_luz.intensidade_luz() * pow(r_dot_l/(R.comprimento()*L.comprimento()),exp_especular);
                 }
             }
 
@@ -65,31 +66,9 @@ class Esfera{
         }
 
 
-        static pair<Esfera,double> calcular_raiz_mais_proxima_interseccao(list<Esfera> esferas, Raio& r, double t_min, double t_max){
-            double raiz_mais_proxima = INFINITY;
-            Esfera esfera_mais_proxima;
-
-            for(auto i= esferas.begin(); i!=esferas.end(); i++){
-                auto raizes = i->calcular_raizes_intersecao(r);
-                    
-                if(raizes.first < raiz_mais_proxima && (raizes.first >= t_min && raizes.first < t_max)){
-                    raiz_mais_proxima = raizes.first;
-                    esfera_mais_proxima = *i;
-                }
-                if(raizes.second < raiz_mais_proxima && (raizes.second >= t_min && raizes.second < t_max)){
-                    raiz_mais_proxima = raizes.second;
-                    esfera_mais_proxima = *i;
-                }
-                    
-            }
-            return {esfera_mais_proxima, raiz_mais_proxima};
-
-            }
-
     public:
         ponto centro;
         double raio;
-    
 };
 
 #endif

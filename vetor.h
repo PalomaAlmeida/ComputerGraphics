@@ -25,6 +25,13 @@ class vetor{
       return *this;
     }
 
+    vetor& operator-=(const vetor &v2) {
+      v[0] -= v2.v[0];
+      v[1] -= v2.v[1];
+      v[2] -= v2.v[2];
+      return *this;
+    }
+
     vetor& operator*=(const double t) {
       v[0] *= t;
       v[1] *= t;

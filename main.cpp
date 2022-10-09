@@ -19,13 +19,11 @@ luz_pontual luz1(posicao_luz1, intensidade_luz);
 
 list<luz_pontual> luzes;
 
-auto expoente_especular = 10;
-
 Cor calcular_cor_pixel(Objeto* objeto_mais_proximo, double raiz_mais_proxima, Raio& r, double luz_ambiente){
   Cor cor_pixel;
     
   if(!isinf(raiz_mais_proxima)){
-    double intensidade_luz_difusa = objeto_mais_proximo->calcular_intensidade_luz(r,raiz_mais_proxima, luz1, expoente_especular, luz_ambiente);
+    double intensidade_luz_difusa = objeto_mais_proximo->calcular_intensidade_luz(r,raiz_mais_proxima, luz1, luz_ambiente);
     cor_pixel = objeto_mais_proximo->getCor() * intensidade_luz_difusa;
   }
   else{
@@ -58,9 +56,9 @@ int main() {
     double raio_esfera1 = 0.4;
     auto centro_esfera1 = ponto(0,0,-1);  
 
-    Objeto::objetos.push_back( new Esfera(centro_esfera1, raio_esfera1, Cor(255,0,0)));
-    Objeto::objetos.push_back( new Plano(ponto(0,-0.4,0), vetor(0,1,0), Cor(100,75,255)));
-    Objeto::objetos.push_back( new Plano(ponto(0,0,-2), vetor(0,0,1), Cor(255,20,50)));
+    Objeto::objetos.push_back( new Esfera(centro_esfera1, raio_esfera1, Cor(255,0,0), 10));
+    Objeto::objetos.push_back( new Plano(ponto(0,-0.4,0), vetor(0,1,0), Cor(100,75,255), 1));
+    Objeto::objetos.push_back( new Plano(ponto(0,0,-2), vetor(0,0,1), Cor(255,20,50), 1));
 
     for (int j = 0; j < altura_imagem; ++j) {
       for (int i = 0; i < largura_imagem; ++i) { 

@@ -15,6 +15,7 @@ class Esfera: public Objeto{
         Esfera(){}
         Esfera(const ponto& centro, const double raio): centro(centro), raio(raio){}
         Esfera(const ponto& centro, const double raio, const Cor& cor): centro(centro), raio(raio), cor_esfera(cor){}
+        Esfera(const ponto& centro, const double raio, const Cor& cor, const int especular): centro(centro), raio(raio), cor_esfera(cor), exp_especular(especular){}
 
         ponto centro_esfera() {return centro;}
         double raio_esfera() { return raio; }
@@ -37,7 +38,7 @@ class Esfera: public Objeto{
             return {t1,t2};
         }
 
-        double calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima, const luz_pontual& ponto_luz, int exp_especular, double luz_ambiente) override{
+        double calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima, const luz_pontual& ponto_luz, double luz_ambiente) override{
             double i = 0;
 
             ponto p = direcao_luz.origem() + raiz_mais_proxima*direcao_luz.direcao();
@@ -72,6 +73,7 @@ class Esfera: public Objeto{
         ponto centro;
         double raio;
         Cor cor_esfera;
+        int exp_especular;
 };
 
 #endif

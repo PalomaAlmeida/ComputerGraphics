@@ -14,10 +14,12 @@ class Plano: public Objeto{
         Plano(){}
         Plano(const ponto& pont_especific, const vetor& normal_plano) : ponto_especific(pont_especific), normal(normal_plano){}
         Plano(const ponto& pont_especific, const vetor& normal_plano, const Cor& cor) : ponto_especific(pont_especific), normal(normal_plano), cor_plano(cor){}
+        Plano(const ponto& pont_especific, const vetor& normal_plano, const Cor& cor, const int especular) : ponto_especific(pont_especific), normal(normal_plano), cor_plano(cor), exp_especular(especular){}
 
         ponto pont_especific() const {return ponto_especific;}
         vetor normal_plano() const { return normal;}
         Cor getCor() override {return cor_plano;}
+        int especular() const {return exp_especular;}
 
         ponto calcula_plano(ponto ponto_qualquer) const {
             return (ponto_qualquer - ponto_especific) * normal;
@@ -34,7 +36,7 @@ class Plano: public Objeto{
             return {t_int,t_int};
         };
 
-        double calcular_intensidade_luz(const Raio& direcao_luz, double t, const luz_pontual& ponto_luz, int exp_especular, double luz_ambiente) override{
+        double calcular_intensidade_luz(const Raio& direcao_luz, double t, const luz_pontual& ponto_luz, double luz_ambiente) override{
             double i = 0;
 
             ponto p = direcao_luz.origem() + t*direcao_luz.direcao();
@@ -64,6 +66,7 @@ class Plano: public Objeto{
         ponto ponto_especific;
         vetor normal;
         Cor cor_plano;
+        int exp_especular;
 
 };
 

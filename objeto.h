@@ -14,7 +14,7 @@ using namespace std;
 class Objeto{
     public:
         virtual pair<double, double> calcular_intersecao(const Raio& r) = 0;
-        virtual double calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima, const luz_pontual& ponto_luz, int exp_especular, double luz_ambiente) = 0;
+        virtual double calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima, const luz_pontual& ponto_luz, double luz_ambiente) = 0;
         virtual Cor getCor() = 0;
 
         static pair<Objeto*, double> calcular_objeto_mais_proximo_intersecao(Raio& r, double t_min, double t_max){

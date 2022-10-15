@@ -5,6 +5,7 @@
 #include "raio.h"
 #include "plano.h"
 #include "luz_pontual.h"
+#include "cilindro.h"
 #include <cmath>
 #include <list>
 
@@ -39,7 +40,7 @@ int main() {
 
     const int largura_imagem = 500;
     const int altura_imagem = 500;
-    std::cout << "P3\n" << largura_imagem << ' ' << altura_imagem << "\n255\n";
+    cout << "P3\n" << largura_imagem << ' ' << altura_imagem << "\n255\n";
 
     // Tamanho do canvas
 
@@ -57,6 +58,7 @@ int main() {
     auto centro_esfera1 = ponto(0,0,-1);  
 
     Objeto::objetos.push_back( new Esfera(centro_esfera1, raio_esfera1, Cor(255,0,0), 10));
+    Objeto::objetos.push_back( new Cilindro(centro_esfera1, vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), raio_esfera1*3, raio_esfera1/3, 10, Cor(0,255,0)));
     Objeto::objetos.push_back( new Plano(ponto(0,-0.4,0), vetor(0,1,0), Cor(100,75,255), 1));
     Objeto::objetos.push_back( new Plano(ponto(0,0,-2), vetor(0,0,1), Cor(255,20,50), 1));
 
@@ -72,7 +74,7 @@ int main() {
 
         //Calcula as raizes, verifica se há interseção entre o raio e as esferas e retorna a cor do pixel
 
-        pair<Objeto*,double> objeto_e_raiz_mais_proximas = Objeto::calcular_objeto_mais_proximo_intersecao(r,1.0,(double) INFINITY);
+        pair<Objeto*,double> objeto_e_raiz_mais_proximas = Objeto::calcular_objeto_mais_proximo_intersecao(r,1,(double) INFINITY);
         Cor cor_pixel = calcular_cor_pixel(objeto_e_raiz_mais_proximas.first, objeto_e_raiz_mais_proximas.second, r, intensidade_luz_ambiente);
 
         pintar(std::cout, cor_pixel);

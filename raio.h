@@ -3,10 +3,10 @@
 
 #include "vetor.h"
 
-class raio {
+class Raio {
   public:
-    raio() {}
-    raio(const ponto& origem, const vetor& direcao): orig(origem), dir(direcao)
+    Raio() {}
+    Raio(const ponto& origem, const vetor& direcao): orig(origem), dir(direcao)
     {}
 
     ponto origem() const  { return orig; }
@@ -20,7 +20,6 @@ class raio {
     ponto orig;
     vetor dir;
 };
-
 
 
 #endif

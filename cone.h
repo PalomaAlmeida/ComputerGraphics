@@ -8,8 +8,7 @@ using namespace std;
 
 class Cone: public Objeto{
     public: 
-        Cone(ponto c, vetor d, double h, double r, double especular, Cor cor): centro_base(c), direcao(d), altura(h), raio_base(r), exp_especular(especular), cor(cor){}
-        Cor getCor() override {return cor;}
+        Cone(ponto c, vetor d, double h, double r, double especular, vetor k_d, vetor k_e, vetor k_a): centro_base(c), direcao(d), altura(h), raio_base(r), exp_especular(especular), k_a(k_a), k_d(k_d), k_e(k_e){}
 
         pair<double,double> calcular_intersecao(const Raio& r) override{
             auto vertice = centro_base + altura*direcao;
@@ -43,8 +42,8 @@ class Cone: public Objeto{
             return {raiz1,raiz2};
         }
 
-        double calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima, const luz_pontual& ponto_luz, double luz_ambiente) override {
-            double i = 0;
+        vetor calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima, const luz_pontual& ponto_luz, vetor luz_ambiente) override {
+            vetor i = luz_ambiente * k_a;
 
             ponto p = direcao_luz.origem() + raiz_mais_proxima*direcao_luz.direcao();
 
@@ -56,21 +55,27 @@ class Cone: public Objeto{
             Raio p_int(p,L);
             bool objeto_possui_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1).second != INFINITY;
 
-            if(objeto_possui_sombra){return luz_ambiente;}
+            if(objeto_possui_sombra){return luz_ambiente * k_a;}
 
             if(n_dot_l > 0){
-                i += ponto_luz.intensidade_luz() * (n_dot_l  / (normal_cone.comprimento() * L.comprimento())) ;
+                i += (ponto_luz.intensidade_luz() * k_d) * (n_dot_l  / (normal_cone.comprimento() * L.comprimento())) ;
             }
 
             if(exp_especular != -1){
                 auto R = 2*normal_cone*n_dot_l - L;
                 auto r_dot_v = produto_vetor(R,-direcao_luz.direcao());
                 if(r_dot_v > 0){
-                    i += ponto_luz.intensidade_luz() * pow(r_dot_v/(R.comprimento()*L.comprimento()),exp_especular);
+                    i += (ponto_luz.intensidade_luz() * k_e) * pow(r_dot_v/(R.comprimento()*L.comprimento()),exp_especular);
                 }
             }
 
-            return min(i + luz_ambiente,1.0);
+            //Dividir todos pela maior componente de i se alguma componente for maior que 1
+            if(i.x() > 1 || i.y() > 1 || i.z() > 1){
+                double maior_componente = max( max(i.x(),i.y()) , i.z());
+                return i/maior_componente;
+            }
+
+            return i;
         }
 
     public:
@@ -79,6 +84,8 @@ class Cone: public Objeto{
         double altura;
         double raio_base;
         double exp_especular;
-        Cor cor;
+        vetor k_a;
+        vetor k_d;
+        vetor k_e;
 };
 #endif

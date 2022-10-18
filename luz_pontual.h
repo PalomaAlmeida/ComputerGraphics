@@ -6,14 +6,14 @@
 class luz_pontual{
     public:
         ponto posicao;
-        double intensidade;
+        vetor intensidade;
         
     public:
         luz_pontual(){}
-        luz_pontual(const ponto& posicao, double intensidade): posicao(posicao), intensidade(intensidade){}
+        luz_pontual(const ponto& posicao, vetor intensidade): posicao(posicao), intensidade(intensidade){}
 
         ponto posicao_ponto() const { return posicao; }
-        double intensidade_luz() const { return intensidade; }
+        vetor intensidade_luz() const { return intensidade; }
 };
 
 

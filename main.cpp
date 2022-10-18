@@ -6,6 +6,7 @@
 #include "plano.h"
 #include "luz_pontual.h"
 #include "cilindro.h"
+#include "cone.h"
 #include <cmath>
 #include <list>
 
@@ -56,9 +57,11 @@ int main() {
 
     double raio_esfera1 = 0.4;
     auto centro_esfera1 = ponto(0,0,-1);  
+    auto centro_topo_cil = centro_esfera1 + (vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3))*(raio_esfera1*3));
 
-    Objeto::objetos.push_back( new Esfera(centro_esfera1, raio_esfera1, Cor(255,0,0), 10));
-    Objeto::objetos.push_back( new Cilindro(centro_esfera1, vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), raio_esfera1*3, raio_esfera1/3, 10, Cor(0,255,0)));
+    Objeto::objetos.push_back( new Esfera(centro_esfera1, raio_esfera1, Cor(0,255,0), 10));
+    Objeto::objetos.push_back( new Cilindro(centro_esfera1, vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), raio_esfera1*3, raio_esfera1/3, 10, Cor(255,0,0)));
+    Objeto::objetos.push_back( new Cone(centro_topo_cil, vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), raio_esfera1/3 ,raio_esfera1*1.5, 10, Cor(173,216,230)));
     Objeto::objetos.push_back( new Plano(ponto(0,-0.4,0), vetor(0,1,0), Cor(100,75,255), 1));
     Objeto::objetos.push_back( new Plano(ponto(0,0,-2), vetor(0,0,1), Cor(255,20,50), 1));
 

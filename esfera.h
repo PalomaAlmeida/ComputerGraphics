@@ -14,12 +14,11 @@ class Esfera: public Objeto{
     public:
         Esfera(){}
         Esfera(const ponto& centro, const double raio): centro(centro), raio(raio){}
-        Esfera(const ponto& centro, const double raio, const Cor& cor): centro(centro), raio(raio), cor_esfera(cor){}
-        Esfera(const ponto& centro, const double raio, const Cor& cor, const int especular): centro(centro), raio(raio), cor_esfera(cor), exp_especular(especular){}
+        Esfera(const ponto& centro, const double raio, const vetor& k_d, const vetor& k_e, const vetor& k_a): centro(centro), raio(raio), k_a(k_a), k_d(k_d), k_e(k_e){}
+        Esfera(const ponto& centro, const double raio, const vetor& k_d, const vetor& k_e, const vetor& k_a, const int especular): centro(centro), raio(raio), k_a(k_a), k_d(k_d), k_e(k_e), exp_especular(especular){}
 
         ponto centro_esfera() {return centro;}
         double raio_esfera() { return raio; }
-        Cor getCor() override { return cor_esfera;}
 
         pair<double,double> calcular_intersecao(const Raio& r) override{
             vetor p = r.origem() - centro_esfera();
@@ -38,8 +37,8 @@ class Esfera: public Objeto{
             return {t1,t2};
         }
 
-        double calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima, const luz_pontual& ponto_luz, double luz_ambiente) override{
-            double i = 0;
+        vetor calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima, const luz_pontual& ponto_luz, vetor luz_ambiente) override{
+            vetor i = luz_ambiente * k_a;
 
             ponto p = direcao_luz.origem() + raiz_mais_proxima*direcao_luz.direcao();
 
@@ -51,28 +50,36 @@ class Esfera: public Objeto{
             Raio p_int(p,L);
             bool objeto_possui_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1).second != INFINITY;
 
-            if(objeto_possui_sombra){return luz_ambiente;}
+            if(objeto_possui_sombra){return i;}
 
             if(n_dot_l > 0){
-                i += ponto_luz.intensidade_luz() * (n_dot_l  / (normal_esfera.comprimento() * L.comprimento())) ;
+                i += (ponto_luz.intensidade_luz() * k_d) * (n_dot_l  / (normal_esfera.comprimento() * L.comprimento())) ;
             }
 
             if(exp_especular != -1){
                 auto R = 2*normal_esfera*n_dot_l - L;
                 auto r_dot_v = produto_vetor(R,-direcao_luz.direcao());
                 if(r_dot_v > 0){
-                    i += ponto_luz.intensidade_luz() * pow(r_dot_v/(R.comprimento()*L.comprimento()),exp_especular);
+                    i += (ponto_luz.intensidade_luz() * k_e) * pow(r_dot_v/(R.comprimento()*L.comprimento()),exp_especular);
                 }
             }
 
-            return min(i + luz_ambiente,1.0);
+            //Dividir todos pela maior componente de i se alguma componente for maior que 1
+            if(i.x() > 1 || i.y() > 1 || i.z() > 1){
+                double maior_componente = max( max(i.x(),i.y()) , i.z());
+                return i/maior_componente;
+            }
+
+            return i;
         }
 
 
     public:
         ponto centro;
         double raio;
-        Cor cor_esfera;
+        vetor k_a;
+        vetor k_d;
+        vetor k_e;
         int exp_especular;
 };
 

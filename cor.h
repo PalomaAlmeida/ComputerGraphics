@@ -22,7 +22,11 @@ void pintar(std::ostream &out, Cor cor_pixel) {
 
 
 inline Cor operator*(const Cor &v2, double t){
-    return Cor(floor(t*v2.r()),floor(t*v2.g()),floor(t*v2.b()));
+  return Cor(floor(t*v2.r()),floor(t*v2.g()),floor(t*v2.b()));
+}
+
+inline Cor operator*(const Cor &v2, const vetor &v1){
+  return Cor(floor(v1.x()*v2.r()), floor(v1.y()*v2.g()), floor(v1.z()*v2.b()));
 }
 
 #endif

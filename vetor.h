@@ -88,4 +88,12 @@ inline double produto_vetor(const vetor &u, const vetor &v){
   return u.v[0] * v.v[0] + u.v[1] * v.v[1] + u.v[2] * v.v[2];
 }
 
+inline vetor produto_vetorial(const vetor &u, const vetor &v){
+  return vetor(
+    u.v[1] * v.v[2] - u.v[2] * v.v[1],
+    u.v[2] * v.v[0] - u.v[0] * v.v[2],
+    u.v[0] * v.v[1] - u.v[1] * v.v[0]
+  );
+}
+
 #endif

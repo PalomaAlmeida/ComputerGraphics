@@ -6,7 +6,7 @@
 #include "luz_pontual.h"
 #include "objeto.h"
 #include <cmath>
-#include <list>
+#include <vector>
 
 using namespace std;
 

@@ -8,18 +8,19 @@
 #include "cilindro.h"
 #include "cone.h"
 #include <cmath>
-#include <list>
+#include <vector>
+#include "malha.h"
 
 using namespace std;
 
-list<Objeto*> Objeto::objetos = list<Objeto*>();
+vector<Objeto*> Objeto::objetos = vector<Objeto*>();
 
 auto posicao_luz1 = ponto(0,0.6,-0.3);
 auto intensidade_luz = vetor(0.7,0.7,0.7);
 auto intensidade_luz_ambiente = vetor(0.3,0.3,0.3);
 luz_pontual luz1(posicao_luz1, intensidade_luz);
 
-list<luz_pontual> luzes;
+vector<luz_pontual> luzes;
 
 Cor calcular_cor_pixel(Objeto* objeto_mais_proximo, double raiz_mais_proxima, Raio& r, vetor luz_ambiente){
   Cor cor_pixel;
@@ -77,6 +78,14 @@ int main() {
 
     Objeto::objetos.push_back( 
       new Cone(centro_topo_cil, vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), raio_esfera1/3 ,raio_esfera1*1.5, 10, vetor(0.8,0.3,0.2), vetor(0.8,0.3,0.2), vetor(0.8,0.3,0.2))
+    );
+
+    Objeto::objetos.push_back(
+      new Malha(
+        vetor(0,1.5,-1.65),
+        vetor(0.4,1.5,-1.65),
+        vetor(0.2,0,-2.05)
+      )
     );
     
     for (int j = 0; j < altura_imagem; ++j) {

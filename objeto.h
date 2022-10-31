@@ -2,7 +2,7 @@
 #define OBJECT_H
 
 #include <iostream>
-#include <list>
+#include <vector>
 #include <cmath>
 #include "esfera.h"
 #include "raio.h"
@@ -38,7 +38,7 @@ class Objeto{
         }
 
     public:
-        static list<Objeto*> objetos;
+        static vector<Objeto*> objetos;
 };
 
 #endif

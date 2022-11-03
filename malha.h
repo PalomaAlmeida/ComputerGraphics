@@ -10,18 +10,19 @@ using namespace std;
 
 class Malha: public Objeto{
     public:
-        Malha(ponto p1, ponto p2, ponto p3){
+        Malha(ponto p1, ponto p2, ponto p3, vetor k_d, vetor k_e, vetor k_a, int exp_especular): k_a(k_a), k_d(k_d), k_e(k_e), exp_especular(exp_especular){
             lista_vertices.push_back(p1);
             lista_vertices.push_back(p2);
             lista_vertices.push_back(p3);
 
             r1 = p2-p1;
             r2 = p3-p1;
+            normal = produto_vetorial(r1,r2);
         }
-
+        
+        Malha(){}
     public:
         pair<double, double> calcular_intersecao(const Raio& r) override{
-            vetor normal = produto_vetorial(r1, r2);
 
             double t_intersect = - produto_vetor((r.origem() - lista_vertices[0]), normal) / produto_vetor(r.direcao(),normal);
             vetor p_intersecao = r.origem() + t_intersect * r.direcao();
@@ -39,14 +40,46 @@ class Malha: public Objeto{
             return {t_intersect,t_intersect};
 
         }
-        vetor calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima, const luz_pontual& ponto_luz, vetor luz_ambiente) override {
-            return vetor(0,1,0);
+        vetor calcular_intensidade_luz(const Raio& direcao_luz, double t, const luz_pontual& ponto_luz, vetor luz_ambiente) override {
+            vetor i = luz_ambiente * k_a;
+
+            ponto p = direcao_luz.origem() + t*direcao_luz.direcao();
+
+            auto L = ponto_luz.posicao_ponto()- p;
+            auto n_dot_l = produto_vetor(normal/normal.comprimento(),L);
+
+            Raio p_int(p,L);
+            bool plano_possui_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1).second != INFINITY;
+            if(plano_possui_sombra){return i;}
+
+            if(n_dot_l > 0){
+                i += (ponto_luz.intensidade_luz() * k_d) * (n_dot_l  / (normal.comprimento() * L.comprimento()));
+            }
+
+            if(exp_especular != -1){
+                auto R = 2*normal*n_dot_l - L;
+                auto r_dot_l = produto_vetor(R,-direcao_luz.direcao());
+                if(r_dot_l > 0){
+                    i += (ponto_luz.intensidade_luz() * k_e) * pow(r_dot_l/(R.comprimento()*L.comprimento()),exp_especular);
+                }
+            }
+            
+            //Dividir todos pela maior componente de i se alguma componente for maior que 1
+            if(i.x() > 1 || i.y() > 1 || i.z() > 1){
+                double maior_componente = max( max(i.x(),i.y()) , i.z());
+                return i/maior_componente;
+            }
+
+            return i;
         }
 
         
     public:
         vector<ponto> lista_vertices;
         vetor r1, r2;
+        vetor normal;
+        vetor k_a, k_d, k_e;
+        int exp_especular;
 
 };
 

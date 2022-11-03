@@ -10,6 +10,7 @@
 #include <cmath>
 #include <vector>
 #include "malha.h"
+#include "cubo.h"
 
 using namespace std;
 
@@ -60,7 +61,7 @@ int main() {
     auto centro_esfera1 = ponto(0,0,-1);  
     auto centro_topo_cil = centro_esfera1 + (vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3))*(raio_esfera1*3));
 
-    Objeto::objetos.push_back( 
+    /*Objeto::objetos.push_back( 
       new Esfera(centro_esfera1, raio_esfera1, vetor(0.7,0.2,0.2), vetor(0.7,0.2,0.2), vetor(0.7,0.2,0.2), 10)
     );
     
@@ -78,16 +79,14 @@ int main() {
 
     Objeto::objetos.push_back( 
       new Cone(centro_topo_cil, vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), raio_esfera1/3 ,raio_esfera1*1.5, 10, vetor(0.8,0.3,0.2), vetor(0.8,0.3,0.2), vetor(0.8,0.3,0.2))
-    );
+    );*/
 
-    Objeto::objetos.push_back(
-      new Malha(
-        vetor(0,1.5,-1.65),
-        vetor(0.4,1.5,-1.65),
-        vetor(0.2,0,-2.05)
-      )
-    );
-    
+    Cubo* cubo = new Cubo(0.4, ponto(0,-1,-1.65), vetor(1,0.078,0.567),vetor(1,0.078,0.567),vetor(1,0.078,0.567), 100);
+
+    for(Malha* face: cubo->faces_cubo){
+      Objeto::objetos.push_back(face);
+    }
+
     for (int j = 0; j < altura_imagem; ++j) {
       for (int i = 0; i < largura_imagem; ++i) { 
 

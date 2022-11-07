@@ -16,7 +16,7 @@ using namespace std;
 
 vector<Objeto*> Objeto::objetos = vector<Objeto*>();
 
-auto posicao_luz1 = ponto(0,0.6,-0.3);
+auto posicao_luz1 = ponto(-1,1.4,-0.2);
 auto intensidade_luz = vetor(0.7,0.7,0.7);
 auto intensidade_luz_ambiente = vetor(0.3,0.3,0.3);
 luz_pontual luz1(posicao_luz1, intensidade_luz);
@@ -57,35 +57,52 @@ int main() {
     // Origem (olho do observador)
     auto origem = ponto(0, 0, 0);
 
-    double raio_esfera1 = 0.4;
-    auto centro_esfera1 = ponto(0,0,-1);  
-    auto centro_topo_cil = centro_esfera1 + (vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3))*(raio_esfera1*3));
-
-    /*Objeto::objetos.push_back( 
-      new Esfera(centro_esfera1, raio_esfera1, vetor(0.7,0.2,0.2), vetor(0.7,0.2,0.2), vetor(0.7,0.2,0.2), 10)
-    );
-    
+    //Chão
     Objeto::objetos.push_back( 
-      new Cilindro(centro_esfera1, vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), raio_esfera1*3, raio_esfera1/3, vetor(0.2,0.3,0.8),vetor(0.2,0.3,0.8),vetor(0.2,0.3,0.8), 10)
-      );
-    
-    Objeto::objetos.push_back( 
-      new Plano(ponto(0,-0.4,0), vetor(0,1,0), vetor(0.2,0.7,0.2), vetor(0,0,0), vetor(0.2,0.7,0.2), 1)
+      new Plano(ponto(0,-1.5,0), vetor(0,1,0), vetor(0.2,0.7,0.2), vetor(0,0,0), vetor(0.2,0.7,0.2), 1)
     );
 
+    //Parede lateral direita
     Objeto::objetos.push_back( 
-      new Plano(ponto(0,0,-2), vetor(0,0,1), vetor(0.3,0.3,0.7), vetor(0,0,0),  vetor(0.3,0.3,0.7), 1)
+      new Plano(ponto(2,-1.5,0), vetor(-1,0,0), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), 1)
     );
 
+    //Parede lateral esquerda
     Objeto::objetos.push_back( 
-      new Cone(centro_topo_cil, vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), raio_esfera1/3 ,raio_esfera1*1.5, 10, vetor(0.8,0.3,0.2), vetor(0.8,0.3,0.2), vetor(0.8,0.3,0.2))
-    );*/
+      new Plano(ponto(-2,-1.5,0), vetor(1,0,0), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), 1)
+    );
 
-    Cubo* cubo = new Cubo(0.4, ponto(0,-1,-1.65), vetor(1,0.078,0.567),vetor(1,0.078,0.567),vetor(1,0.078,0.567), 100);
+    //Parede frontal
+    Objeto::objetos.push_back( 
+      new Plano(ponto(-2,-1.5,-4), vetor(0,0,1), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), 1)
+    );
+
+    //Teto
+    Objeto::objetos.push_back( 
+      new Plano(ponto(0,1.5,0), vetor(0,-1,0), vetor(0.933,0.933,0.933), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), 1)
+    );
+
+    //Cone
+    Objeto::objetos.push_back(
+      new Cone(ponto(0,-0.6,-2), vetor(0,1,0), 1.5, 0.9, 1, vetor(0,1,0.498), vetor(0,1,0.498), vetor(0,1,0.498))
+    );
+
+    //Cilindro
+    Objeto::objetos.push_back(
+      new Cilindro(ponto(0,-1.5,-2), vetor(0,1,0), 0.9, 0.05, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
+    );
+
+    //Cubo
+    Cubo* cubo = new Cubo(0.4, ponto(0,-1.5,-1.65), vetor(1,0.078,0.576),vetor(1,0.078,0.576),vetor(1,0.078,0.567), 100);
 
     for(Malha* face: cubo->faces_cubo){
       Objeto::objetos.push_back(face);
     }
+
+    //Esfera
+    Objeto::objetos.push_back(
+      new Esfera(ponto(0,0.95,-2), 0.05, vetor(0.854, 0.647, 0.125), vetor(0.854, 0.647, 0.125), vetor(0.854, 0.647, 0.125), 1)
+    );
 
     for (int j = 0; j < altura_imagem; ++j) {
       for (int i = 0; i < largura_imagem; ++i) { 

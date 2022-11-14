@@ -9,6 +9,8 @@
 #include "cone.h"
 #include <cmath>
 #include <list>
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 using namespace std;
 
@@ -21,10 +23,13 @@ luz_pontual luz1(posicao_luz1, intensidade_luz);
 
 list<luz_pontual> luzes;
 
-Cor calcular_cor_pixel(Objeto* objeto_mais_proximo, double raiz_mais_proxima, Raio& r, double luz_ambiente){
+Cor calcular_cor_pixel(Objeto* objeto_mais_proximo, double raiz_mais_proxima, Raio& r, double luz_ambiente, int i, int j){
   Cor cor_pixel;
     
   if(!isinf(raiz_mais_proxima)){
+    if(objeto_mais_proximo->hasTexture) {
+      objeto_mais_proximo->set_current_color(i, j);
+    }
     double intensidade_luz_difusa = objeto_mais_proximo->calcular_intensidade_luz(r,raiz_mais_proxima, luz1, luz_ambiente);
     cor_pixel = objeto_mais_proximo->getCor() * intensidade_luz_difusa;
   }
@@ -62,8 +67,8 @@ int main() {
     Objeto::objetos.push_back( new Esfera(centro_esfera1, raio_esfera1, Cor(0,255,0), 10));
     Objeto::objetos.push_back( new Cilindro(centro_esfera1, vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), raio_esfera1*3, raio_esfera1/3, 10, Cor(255,0,0)));
     Objeto::objetos.push_back( new Cone(centro_topo_cil, vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), raio_esfera1/3 ,raio_esfera1*1.5, 10, Cor(173,216,230)));
-    Objeto::objetos.push_back( new Plano(ponto(0,-0.4,0), vetor(0,1,0), Cor(100,75,255), 1));
-    Objeto::objetos.push_back( new Plano(ponto(0,0,-2), vetor(0,0,1), Cor(255,20,50), 1));
+    Objeto::objetos.push_back( new Plano(ponto(0,-0.4,0), vetor(0,1,0), "wood_texture.jpg", 1));
+    Objeto::objetos.push_back( new Plano(ponto(0,0,-2), vetor(0,0,1), Cor(100,75,255) , 1));
 
     for (int j = 0; j < altura_imagem; ++j) {
       for (int i = 0; i < largura_imagem; ++i) { 
@@ -78,7 +83,7 @@ int main() {
         //Calcula as raizes, verifica se há interseção entre o raio e as esferas e retorna a cor do pixel
 
         pair<Objeto*,double> objeto_e_raiz_mais_proximas = Objeto::calcular_objeto_mais_proximo_intersecao(r,1,(double) INFINITY);
-        Cor cor_pixel = calcular_cor_pixel(objeto_e_raiz_mais_proximas.first, objeto_e_raiz_mais_proximas.second, r, intensidade_luz_ambiente);
+        Cor cor_pixel = calcular_cor_pixel(objeto_e_raiz_mais_proximas.first, objeto_e_raiz_mais_proximas.second, r, intensidade_luz_ambiente, i, j);
 
         pintar(std::cout, cor_pixel);
       }

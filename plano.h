@@ -15,6 +15,7 @@ class Plano: public Objeto{
         Plano(const ponto& pont_especific, const vetor& normal_plano) : ponto_especific(pont_especific), normal(normal_plano){}
         Plano(const ponto& pont_especific, const vetor& normal_plano, const Cor& cor) : ponto_especific(pont_especific), normal(normal_plano), cor_plano(cor){}
         Plano(const ponto& pont_especific, const vetor& normal_plano, const Cor& cor, const int especular) : ponto_especific(pont_especific), normal(normal_plano), cor_plano(cor), exp_especular(especular){}
+        Plano(const ponto& pont_especific, const vetor& normal_plano, const char* fileName, int m) : ponto_especific(pont_especific), normal(normal_plano), Objeto(fileName, m){}
 
         ponto pont_especific() const {return ponto_especific;}
         vetor normal_plano() const { return normal;}

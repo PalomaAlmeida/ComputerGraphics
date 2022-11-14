@@ -10,7 +10,7 @@ using namespace std;
 
 class Malha: public Objeto{
     public:
-        Malha(ponto p1, ponto p2, ponto p3, vetor k_d, vetor k_e, vetor k_a, int exp_especular): k_a(k_a), k_d(k_d), k_e(k_e), exp_especular(exp_especular){
+        Malha(ponto p1, ponto p2, ponto p3, vetor k_d, vetor k_e, vetor k_a, int exp_especular): Objeto(k_d,k_e,k_a, exp_especular){
             lista_vertices.push_back(p1);
             lista_vertices.push_back(p2);
             lista_vertices.push_back(p3);
@@ -21,6 +21,17 @@ class Malha: public Objeto{
         }
         
         Malha(){}
+
+        Malha(ponto p1, ponto p2, ponto p3, const char* fileName): Objeto(fileName){
+            lista_vertices.push_back(p1);
+            lista_vertices.push_back(p2);
+            lista_vertices.push_back(p3);
+
+            r1 = p2-p1;
+            r2 = p3-p1;
+            normal = produto_vetorial(r1,r2);
+        }
+
     public:
         pair<double, double> calcular_intersecao(const Raio& r) override{
 
@@ -78,8 +89,6 @@ class Malha: public Objeto{
         vector<ponto> lista_vertices;
         vetor r1, r2;
         vetor normal;
-        vetor k_a, k_d, k_e;
-        int exp_especular;
 
 };
 

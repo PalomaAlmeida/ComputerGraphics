@@ -12,9 +12,9 @@ using namespace std;
 class Plano: public Objeto{
     public:
         Plano(){}
-        Plano(const ponto& pont_especific, const vetor& normal_plano) : ponto_especific(pont_especific), normal(normal_plano){}
-        Plano(const ponto& pont_especific, const vetor& normal_plano, vetor k_d, vetor k_e, vetor k_a) : ponto_especific(pont_especific), normal(normal_plano), k_a(k_a), k_d(k_d), k_e(k_e){}
-        Plano(const ponto& pont_especific, const vetor& normal_plano, vetor k_d, vetor k_e, vetor k_a, const int especular) : ponto_especific(pont_especific), normal(normal_plano), k_a(k_a), k_d(k_d), k_e(k_e), exp_especular(especular){}
+        Plano(const ponto& pont_especific, const vetor& normal_plano, vetor k_d, vetor k_e, vetor k_a) : ponto_especific(pont_especific), normal(normal_plano), Objeto(k_d,k_e,k_a){}
+        Plano(const ponto& pont_especific, const vetor& normal_plano, vetor k_d, vetor k_e, vetor k_a, const int especular) : ponto_especific(pont_especific), normal(normal_plano), Objeto(k_d,k_e,k_a,especular){}
+        Plano(const ponto& pont_especific, const vetor& normal_plano, const char* fileName) : ponto_especific(pont_especific), normal(normal_plano), Objeto(fileName){}
 
         ponto pont_especific() const {return ponto_especific;}
         vetor normal_plano() const { return normal;}
@@ -71,10 +71,6 @@ class Plano: public Objeto{
     public:
         ponto ponto_especific;
         vetor normal;
-        vetor k_a;
-        vetor k_d;
-        vetor k_e;
-        int exp_especular;
 
 };
 

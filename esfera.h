@@ -14,8 +14,9 @@ class Esfera: public Objeto{
     public:
         Esfera(){}
         Esfera(const ponto& centro, const double raio): centro(centro), raio(raio){}
-        Esfera(const ponto& centro, const double raio, const vetor& k_d, const vetor& k_e, const vetor& k_a): centro(centro), raio(raio), k_a(k_a), k_d(k_d), k_e(k_e){}
-        Esfera(const ponto& centro, const double raio, const vetor& k_d, const vetor& k_e, const vetor& k_a, const int especular): centro(centro), raio(raio), k_a(k_a), k_d(k_d), k_e(k_e), exp_especular(especular){}
+        Esfera(const ponto& centro, const double raio, const vetor& k_d, const vetor& k_e, const vetor& k_a): centro(centro), raio(raio), Objeto(k_d,k_e,k_a){}
+        Esfera(const ponto& centro, const double raio, const vetor& k_d, const vetor& k_e, const vetor& k_a, const int especular): centro(centro), raio(raio), Objeto(k_d,k_e,k_a,especular){}
+        Esfera(const ponto& centro, const double raio, const char* fileName): centro(centro), raio(raio), Objeto(fileName) {}
 
         ponto centro_esfera() {return centro;}
         double raio_esfera() { return raio; }
@@ -77,10 +78,6 @@ class Esfera: public Objeto{
     public:
         ponto centro;
         double raio;
-        vetor k_a;
-        vetor k_d;
-        vetor k_e;
-        int exp_especular;
 };
 
 #endif

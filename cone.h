@@ -8,7 +8,7 @@ using namespace std;
 
 class Cone: public Objeto{
     public: 
-        Cone(ponto c, vetor d, double h, double r, double especular, vetor k_d, vetor k_e, vetor k_a): centro_base(c), direcao(d), altura(h), raio_base(r), exp_especular(especular), k_a(k_a), k_d(k_d), k_e(k_e){}
+        Cone(ponto c, vetor d, double h, double r, double especular, vetor k_d, vetor k_e, vetor k_a): centro_base(c), direcao(d), altura(h), raio_base(r), Objeto(k_d,k_e,k_a, especular){}
 
         pair<double,double> calcular_intersecao(const Raio& r) override{
             auto vertice = centro_base + altura*direcao;
@@ -83,9 +83,5 @@ class Cone: public Objeto{
         vetor direcao;
         double altura;
         double raio_base;
-        double exp_especular;
-        vetor k_a;
-        vetor k_d;
-        vetor k_e;
 };
 #endif

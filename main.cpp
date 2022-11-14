@@ -11,6 +11,8 @@
 #include <vector>
 #include "malha.h"
 #include "cubo.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 using namespace std;
 
@@ -23,10 +25,15 @@ luz_pontual luz1(posicao_luz1, intensidade_luz);
 
 vector<luz_pontual> luzes;
 
-Cor calcular_cor_pixel(Objeto* objeto_mais_proximo, double raiz_mais_proxima, Raio& r, vetor luz_ambiente){
+Cor calcular_cor_pixel(Objeto* objeto_mais_proximo, double raiz_mais_proxima, Raio& r, vetor luz_ambiente, int i, int j){
   Cor cor_pixel;
     
   if(!isinf(raiz_mais_proxima)){
+
+    if(objeto_mais_proximo->hasTexture) {
+      objeto_mais_proximo->set_current_color(i, j);
+    }
+
     vetor intensidade_luz_ponto = objeto_mais_proximo->calcular_intensidade_luz(r,raiz_mais_proxima, luz1, luz_ambiente);
     cor_pixel =  Cor(255,255,255) * intensidade_luz_ponto;
   }
@@ -59,7 +66,7 @@ int main() {
 
     //Chão
     Objeto::objetos.push_back( 
-      new Plano(ponto(0,-1.5,0), vetor(0,1,0), vetor(0.2,0.7,0.2), vetor(0,0,0), vetor(0.2,0.7,0.2), 1)
+      new Plano(ponto(0,-1.5,0), vetor(0,1,0), "textures/wood_texture.jpg")
     );
 
     //Parede lateral direita
@@ -117,7 +124,7 @@ int main() {
         //Calcula as raizes, verifica se há interseção entre o raio e as esferas e retorna a cor do pixel
 
         pair<Objeto*,double> objeto_e_raiz_mais_proximas = Objeto::calcular_objeto_mais_proximo_intersecao(r,1,(double) INFINITY);
-        Cor cor_pixel = calcular_cor_pixel(objeto_e_raiz_mais_proximas.first, objeto_e_raiz_mais_proximas.second, r, intensidade_luz_ambiente);
+        Cor cor_pixel = calcular_cor_pixel(objeto_e_raiz_mais_proximas.first, objeto_e_raiz_mais_proximas.second, r, intensidade_luz_ambiente, i, j);
 
         pintar(std::cout, cor_pixel);
       }

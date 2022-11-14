@@ -67,8 +67,8 @@ int main() {
     Objeto::objetos.push_back( new Esfera(centro_esfera1, raio_esfera1, Cor(0,255,0), 10));
     Objeto::objetos.push_back( new Cilindro(centro_esfera1, vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), raio_esfera1*3, raio_esfera1/3, 10, Cor(255,0,0)));
     Objeto::objetos.push_back( new Cone(centro_topo_cil, vetor(-1/sqrt(3), 1/sqrt(3), -1/sqrt(3)), raio_esfera1/3 ,raio_esfera1*1.5, 10, Cor(173,216,230)));
-    Objeto::objetos.push_back( new Plano(ponto(0,-0.4,0), vetor(0,1,0), "wood_texture.jpg", 1));
-    Objeto::objetos.push_back( new Plano(ponto(0,0,-2), vetor(0,0,1), Cor(100,75,255) , 1));
+    Objeto::objetos.push_back( new Plano(ponto(0,-0.4,0), vetor(0,1,0), "imgbin-wood-flooring-texture-mapping-parquetry-wood-KHvzc4C7zwrFXvUJhdHj82Wk4.jpg", 1));
+    //Objeto::objetos.push_back( new Plano(ponto(0,0,-2), vetor(0,0,1), Cor(100,75,255) , 1));
 
     for (int j = 0; j < altura_imagem; ++j) {
       for (int i = 0; i < largura_imagem; ++i) { 

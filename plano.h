@@ -19,7 +19,13 @@ class Plano: public Objeto{
 
         ponto pont_especific() const {return ponto_especific;}
         vetor normal_plano() const { return normal;}
-        Cor getCor() override {return cor_plano;}
+        Cor getCor() override {
+            if(this->hasTexture){
+                vetor color = this->current_color * 100;
+                cor_plano = Cor(color[0], color[1], color[2]);
+            }
+            return cor_plano;
+        }
         int especular() const {return exp_especular;}
 
         ponto calcula_plano(ponto ponto_qualquer) const {

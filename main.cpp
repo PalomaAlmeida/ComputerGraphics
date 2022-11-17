@@ -11,6 +11,7 @@
 #include <vector>
 #include "malha.h"
 #include "cubo.h"
+#include "camera.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -46,23 +47,24 @@ Cor calcular_cor_pixel(Objeto* objeto_mais_proximo, double raiz_mais_proxima, Ra
 
 int main() {
   
+    //Razão entre a altura e largura da tela
+    const float aspect_ratio = 1.0/1.0 ;
+    
     // Qtd pixels (divisão dos quadrados da "tela de mosquito")
-
     const int largura_imagem = 500;
-    const int altura_imagem = 500;
+    const int altura_imagem = (largura_imagem/aspect_ratio);
     cout << "P3\n" << largura_imagem << ' ' << altura_imagem << "\n255\n";
-
-    // Tamanho do canvas
-
-    auto hJanela = 0.6;
-    auto wJanela = 0.6;
-    auto dJanela = 0.3;
-
-    auto Dx = wJanela / (largura_imagem);
-    auto Dy = hJanela / (altura_imagem); 
 
     // Origem (olho do observador)
     auto origem = ponto(0, 0, 0);
+
+    //Vfov (define um "zoom" para a camera) em graus
+    double vfov = 90;
+
+    //Camera
+    Camera camera = Camera(origem,ponto(0,0,-1),ponto(0,1,0),vfov,2,aspect_ratio);
+
+    //Objetos do mundo
 
     //Chão
     Objeto::objetos.push_back( 
@@ -114,15 +116,10 @@ int main() {
     for (int j = 0; j < altura_imagem; ++j) {
       for (int i = 0; i < largura_imagem; ++i) { 
 
-        //Coordenadas do centro do quadrado da "tela de mosquito" (pixel)
-        auto x = -(wJanela / 2) + Dx/2 + i*Dx;
-        auto y = (hJanela/2) - Dy/2 - j*Dy;
-
-        //Raio que sai da origem para o pixel
-        Raio r(origem, ponto(x,y,-dJanela));
+        //Raio que sai do olho do observador para o pixel
+        Raio r = camera.getRaio(altura_imagem, largura_imagem, i , j);
 
         //Calcula as raizes, verifica se há interseção entre o raio e as esferas e retorna a cor do pixel
-
         pair<Objeto*,double> objeto_e_raiz_mais_proximas = Objeto::calcular_objeto_mais_proximo_intersecao(r,1,(double) INFINITY);
         Cor cor_pixel = calcular_cor_pixel(objeto_e_raiz_mais_proximas.first, objeto_e_raiz_mais_proximas.second, r, intensidade_luz_ambiente, i, j);
 

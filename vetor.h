@@ -14,6 +14,18 @@ class vetor{
     double y() const { return v[1]; }
     double z() const { return v[2]; }
 
+    double x(double element){
+      return element;
+    }
+
+    double y(double element){
+      return element;
+    }
+
+    double z(double element){
+      return element;
+    }
+
     vetor operator-() const { return vetor(-v[0], -v[1], -v[2]); }
     double operator[](int i) const { return v[i]; }
     double& operator[](int i) { return v[i]; }

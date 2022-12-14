@@ -51,30 +51,34 @@ class Malha: public Objeto{
             return {t_intersect,t_intersect};
 
         }
-        vetor calcular_intensidade_luz(const Raio& direcao_luz, double t, const luz_pontual& ponto_luz, vetor luz_ambiente) override {
-            vetor i = luz_ambiente * k_a;
+        vetor calcular_intensidade_luz(const Raio& direcao_luz, double t) override {
+            vetor i = Luz::luz_ambiente->intensidade_luz * k_a;
 
             ponto p = direcao_luz.origem() + t*direcao_luz.direcao();
 
-            auto L = ponto_luz.posicao_ponto()- p;
-            auto n_dot_l = produto_vetor(normal/normal.comprimento(),L);
+            for(auto ponto_luz: Luz::luzes_pontuais){
 
-            Raio p_int(p,L);
-            bool plano_possui_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1).second != INFINITY;
-            if(plano_possui_sombra){return i;}
+                auto L = ponto_luz->posicao_luz- p;
+                auto n_dot_l = produto_vetor(normal/normal.comprimento(),L);
 
-            if(n_dot_l > 0){
-                i += (ponto_luz.intensidade_luz() * k_d) * (n_dot_l  / (normal.comprimento() * L.comprimento()));
-            }
+                Raio p_int(p,L);
+                bool malha_possui_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1).second != INFINITY;
+                if(malha_possui_sombra){continue;}
 
-            if(exp_especular != -1){
-                auto R = 2*normal*n_dot_l - L;
-                auto r_dot_l = produto_vetor(R,-direcao_luz.direcao());
-                if(r_dot_l > 0){
-                    i += (ponto_luz.intensidade_luz() * k_e) * pow(r_dot_l/(R.comprimento()*L.comprimento()),exp_especular);
+                if(n_dot_l > 0){
+                    i += (ponto_luz->intensidade_luz * k_d) * (n_dot_l  / (normal.comprimento() * L.comprimento()));
                 }
+
+                if(exp_especular != -1){
+                    auto R = 2*normal*n_dot_l - L;
+                    auto r_dot_l = produto_vetor(R,-direcao_luz.direcao());
+                    if(r_dot_l > 0){
+                        i += (ponto_luz->intensidade_luz * k_e) * pow(r_dot_l/(R.comprimento()*L.comprimento()),exp_especular);
+                    }
+                }
+
             }
-            
+
             //Dividir todos pela maior componente de i se alguma componente for maior que 1
             if(i.x() > 1 || i.y() > 1 || i.z() > 1){
                 double maior_componente = max( max(i.x(),i.y()) , i.z());

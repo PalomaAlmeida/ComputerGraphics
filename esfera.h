@@ -38,33 +38,35 @@ class Esfera: public Objeto{
             return {t1,t2};
         }
 
-        vetor calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima, const luz_pontual& ponto_luz, vetor luz_ambiente) override{
-            vetor i = luz_ambiente * k_a;
+        vetor calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima) override{
+            vetor i = Luz::luz_ambiente->intensidade_luz * k_a;
 
             ponto p = direcao_luz.origem() + raiz_mais_proxima*direcao_luz.direcao();
 
-            auto vetor_normal_esfera = p - centro_esfera();
-            auto normal_esfera = vetor_normal_esfera/vetor_normal_esfera.comprimento();
-            auto L = ponto_luz.posicao_ponto()- p;
-            auto n_dot_l = produto_vetor(normal_esfera,L);
+            for(auto ponto_luz: Luz::luzes_pontuais){
 
-            Raio p_int(p,L);
-            bool objeto_possui_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1).second != INFINITY;
+                auto vetor_normal_esfera = p - centro_esfera();
+                auto normal_esfera = vetor_normal_esfera/vetor_normal_esfera.comprimento();
+                auto L = ponto_luz->posicao_luz- p;
+                auto n_dot_l = produto_vetor(normal_esfera,L);
 
-            if(objeto_possui_sombra){return i;}
+                Raio p_int(p,L);
+                bool objeto_possui_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1).second != INFINITY;
 
-            if(n_dot_l > 0){
-                i += (ponto_luz.intensidade_luz() * k_d) * (n_dot_l  / (normal_esfera.comprimento() * L.comprimento())) ;
-            }
+                if(objeto_possui_sombra){continue;}
 
-            if(exp_especular != -1){
-                auto R = 2*normal_esfera*n_dot_l - L;
-                auto r_dot_v = produto_vetor(R,-direcao_luz.direcao());
-                if(r_dot_v > 0){
-                    i += (ponto_luz.intensidade_luz() * k_e) * pow(r_dot_v/(R.comprimento()*L.comprimento()),exp_especular);
+                if(n_dot_l > 0){
+                    i += (ponto_luz->intensidade_luz * k_d) * (n_dot_l  / (normal_esfera.comprimento() * L.comprimento())) ;
+                }
+
+                if(exp_especular != -1){
+                    auto R = 2*normal_esfera*n_dot_l - L;
+                    auto r_dot_v = produto_vetor(R,-direcao_luz.direcao());
+                    if(r_dot_v > 0){
+                        i += (ponto_luz->intensidade_luz * k_e) * pow(r_dot_v/(R.comprimento()*L.comprimento()),exp_especular);
+                    }
                 }
             }
-
             //Dividir todos pela maior componente de i se alguma componente for maior que 1
             if(i.x() > 1 || i.y() > 1 || i.z() > 1){
                 double maior_componente = max( max(i.x(),i.y()) , i.z());

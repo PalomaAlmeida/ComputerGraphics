@@ -1,49 +1,20 @@
 #include <iostream>
-#include "esfera.h"
+#include "utils.h"
 #include "cor.h"
 #include "vetor.h"
 #include "raio.h"
-#include "plano.h"
-#include "luz_pontual.h"
-#include "cilindro.h"
-#include "cone.h"
-#include <cmath>
 #include <vector>
-#include "malha.h"
-#include "cubo.h"
 #include "camera.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include "SDL/SDLEngine.h"
 
 using namespace std;
 
 vector<Objeto*> Objeto::objetos = vector<Objeto*>();
+vector<Luz*> Luz::luzes_pontuais = vector<Luz*>();
 
-auto posicao_luz1 = ponto(-1,1.4,-0.2);
-auto intensidade_luz = vetor(0.7,0.7,0.7);
-auto intensidade_luz_ambiente = vetor(0.3,0.3,0.3);
-luz_pontual luz1(posicao_luz1, intensidade_luz);
-
-vector<luz_pontual> luzes;
-
-Cor calcular_cor_pixel(Objeto* objeto_mais_proximo, double raiz_mais_proxima, Raio& r, vetor luz_ambiente, int i, int j){
-  Cor cor_pixel;
-    
-  if(!isinf(raiz_mais_proxima)){
-
-    if(objeto_mais_proximo->hasTexture) {
-      objeto_mais_proximo->set_current_color(i, j);
-    }
-
-    vetor intensidade_luz_ponto = objeto_mais_proximo->calcular_intensidade_luz(r,raiz_mais_proxima, luz1, luz_ambiente);
-    cor_pixel =  Cor(255,255,255) * intensidade_luz_ponto;
-  }
-  else{
-    cor_pixel = Cor(100,100,100);
-  }
-
-  return cor_pixel;
-}
+Luz* Luz::luz_ambiente = new Luz();
 
 int main() {
   
@@ -53,7 +24,12 @@ int main() {
     // Qtd pixels (divisão dos quadrados da "tela de mosquito")
     const int largura_imagem = 500;
     const int altura_imagem = (largura_imagem/aspect_ratio);
-    cout << "P3\n" << largura_imagem << ' ' << altura_imagem << "\n255\n";
+    float matrizCores[largura_imagem * altura_imagem * 3];
+
+    SDLEngine sdlEngine{ "Árvore de Natal"
+                    ,largura_imagem, altura_imagem
+                    ,largura_imagem, altura_imagem
+                  };
 
     // Origem (olho do observador)
     auto origem = ponto(0, 0, 0);
@@ -62,68 +38,75 @@ int main() {
     double vfov = 90;
 
     //Camera
-    Camera camera = Camera(origem,ponto(0,0,-1),ponto(0,1,0),vfov,2,aspect_ratio);
+    Camera camera = Camera(origem,ponto(1,0,-1),ponto(0,1,0),vfov,2,aspect_ratio);
+    
+    //Adiciona os objetos ao cenário
+    montarObjetosCenarioArvoreNatal();
 
-    //Objetos do mundo
+    //Cria a matriz inicial de pixels
 
-    //Chão
-    Objeto::objetos.push_back( 
-      new Plano(ponto(0,-1.5,0), vetor(0,1,0), "textures/wood_texture.jpg")
+    memcpy(
+      matrizCores,
+      criar_matriz_pixels(altura_imagem,largura_imagem,camera),
+      sizeof(matrizCores)
     );
 
-    //Parede lateral direita
-    Objeto::objetos.push_back( 
-      new Plano(ponto(2,-1.5,0), vetor(-1,0,0), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), 1)
-    );
+    //Verifica continuamente sobre eventos na tela
+    
+    SDL_Event e;
+    bool quit = false;
+    bool matrizChanged = true;
+    
+    while (!quit){ 
+      
+      //Atualizar a tela com a matriz de pixels se houver alguma mudança nos objetos do cenário
 
-    //Parede lateral esquerda
-    Objeto::objetos.push_back( 
-      new Plano(ponto(-2,-1.5,0), vetor(1,0,0), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), 1)
-    );
+      if(matrizChanged){
+        sdlEngine.atualizarCanvas(matrizCores);
+        sdlEngine.atualizarJanela();
+        matrizChanged = false;
+      }
 
-    //Parede frontal
-    Objeto::objetos.push_back( 
-      new Plano(ponto(-2,-1.5,-4), vetor(0,0,1), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), 1)
-    );
+      while( SDL_PollEvent( &e ) ){
 
-    //Teto
-    Objeto::objetos.push_back( 
-      new Plano(ponto(0,1.5,0), vetor(0,-1,0), vetor(0.933,0.933,0.933), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), 1)
-    );
+        if( e.type == SDL_QUIT ){
+          quit = true;
+        }
 
-    //Cone
-    Objeto::objetos.push_back(
-      new Cone(ponto(0,-0.6,-2), vetor(0,1,0), 1.5, 0.9, 1, vetor(0,1,0.498), vetor(0,1,0.498), vetor(0,1,0.498))
-    );
+        else if( e.type == SDL_MOUSEBUTTONDOWN){
+          int x = e.button.x;
+          int y = e.button.y;
 
-    //Cilindro
-    Objeto::objetos.push_back(
-      new Cilindro(ponto(0,-1.5,-2), vetor(0,1,0), 0.9, 0.05, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
-    );
+          Raio r = camera.getRaio(altura_imagem, largura_imagem, x, y);
+          pair<Objeto*,double> objeto_e_raiz_mais_proximas = Objeto::calcular_objeto_mais_proximo_intersecao(r,1,(double) INFINITY);
+            
+          int opcao = 0;
+            
+          cout << "\n" << "Você selecionou um objeto do tipo: " << identificar_objeto(objeto_e_raiz_mais_proximas.first) << "\n\n";
+          cout << "Selecione uma das ações abaixo: " << "\n";
+          cout << "1 - Deletar" << "\n";
+          cout << "2 - Movimentar" << "\n";
+          cout << "3 - Rotacionar" << "\n";
+          cout << "4 - Cancelar" << "\n";
+          cin  >> opcao;
+            
+          switch(opcao){
+            case 1:
+              deletar_objeto(objeto_e_raiz_mais_proximas.first);
+      
+              memcpy(
+                matrizCores,
+                criar_matriz_pixels(altura_imagem,largura_imagem,camera),
+                sizeof(matrizCores)
+              );
 
-    //Cubo
-    Cubo* cubo = new Cubo(0.4, ponto(0,-1.5,-1.65), vetor(1,0.078,0.576),vetor(1,0.078,0.576),vetor(1,0.078,0.567), 100);
-
-    for(Malha* face: cubo->faces_cubo){
-      Objeto::objetos.push_back(face);
-    }
-
-    //Esfera
-    Objeto::objetos.push_back(
-      new Esfera(ponto(0,0.95,-2), 0.05, vetor(0.854, 0.647, 0.125), vetor(0.854, 0.647, 0.125), vetor(0.854, 0.647, 0.125), 1)
-    );
-
-    for (int j = 0; j < altura_imagem; ++j) {
-      for (int i = 0; i < largura_imagem; ++i) { 
-
-        //Raio que sai do olho do observador para o pixel
-        Raio r = camera.getRaio(altura_imagem, largura_imagem, i , j);
-
-        //Calcula as raizes, verifica se há interseção entre o raio e as esferas e retorna a cor do pixel
-        pair<Objeto*,double> objeto_e_raiz_mais_proximas = Objeto::calcular_objeto_mais_proximo_intersecao(r,1,(double) INFINITY);
-        Cor cor_pixel = calcular_cor_pixel(objeto_e_raiz_mais_proximas.first, objeto_e_raiz_mais_proximas.second, r, intensidade_luz_ambiente, i, j);
-
-        pintar(std::cout, cor_pixel);
+              matrizChanged = true;
+              break;
+            default:
+              cout << "\n" << "Ação cancelada." << "\n";
+              break;
+          }              
+        }
       }
     }
 

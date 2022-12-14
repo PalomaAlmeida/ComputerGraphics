@@ -1,19 +1,16 @@
-#ifndef LUZ_H
-#define LUZ_H
+#ifndef LUZ_PONTUAL_H
+#define LUZ_PONTUAL_H
 
 #include "vetor.h"
+#include "luz.h"
 
-class luz_pontual{
+class LuzPontual: public Luz{
     public:
-        ponto posicao;
-        vetor intensidade;
-        
-    public:
-        luz_pontual(){}
-        luz_pontual(const ponto& posicao, vetor intensidade): posicao(posicao), intensidade(intensidade){}
-
-        ponto posicao_ponto() const { return posicao; }
-        vetor intensidade_luz() const { return intensidade; }
+        LuzPontual(){}
+        LuzPontual(const ponto& posicao, vetor intensidade){
+            Luz::posicao_luz = posicao;
+            Luz::intensidade_luz = intensidade;
+        }
 };
 
 

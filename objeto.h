@@ -17,7 +17,7 @@ typedef unsigned char int8;
 class Objeto{
     public:
         virtual pair<double, double> calcular_intersecao(const Raio& r) = 0;
-        virtual vetor calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima, const luz_pontual& ponto_luz, vetor luz_ambiente) = 0;
+        virtual vetor calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima) = 0;
         vetor k_d, k_e, k_a;
         int exp_especular = -1;
         int width, height, channel;

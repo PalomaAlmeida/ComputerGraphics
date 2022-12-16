@@ -109,6 +109,10 @@ class Cubo: public Objeto{
         vetor calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima) override{
             return malha_mais_proxima_intersecao->calcular_intensidade_luz(direcao_luz, raiz_mais_proxima);
         }
+
+        void transformacao() override{}
+        void atualizar_normal() override {}
+        void atualizar_normal(Matriz M) override{}
         
     public:
         vector<Malha*> faces_cubo;

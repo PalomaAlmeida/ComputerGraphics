@@ -60,22 +60,22 @@ static void cisalhamento_objeto(Objeto* objeto, double angulo, int opcao_cis){
 
 static string identificar_objeto(Objeto* objeto){
     if(dynamic_cast<Esfera*>(objeto) != NULL){
-        return "Esfera";
+      return "Esfera";
     }
     else if(dynamic_cast<Plano*>(objeto) != NULL){
-        return "Plano";
+      return "Plano";
     }
     else if(dynamic_cast<Cilindro*>(objeto) != NULL){
-        return "Cilindro";
+      return "Cilindro";
     }
     else if(dynamic_cast<Cone*>(objeto) != NULL){
-        return "Cone";
+      return "Cone";
     }
     else if(dynamic_cast<Cubo*>(objeto) != NULL){
-        return "Cubo";
+      return "Cubo";
     }
 
-    return "Objeto";
+    return "Nenhum objeto";
 }
 
 static Cor calcular_cor_pixel(Objeto* objeto_mais_proximo, double raiz_mais_proxima, Raio& r, int i, int j){
@@ -96,15 +96,15 @@ static Cor calcular_cor_pixel(Objeto* objeto_mais_proximo, double raiz_mais_prox
   return cor_pixel;
 }
 
-static float* criar_matriz_pixels(int altura_imagem, int largura_imagem, Camera camera){
-    float* matrizPixels = new float[largura_imagem * altura_imagem * 3];
+static float* criar_matriz_pixels(int ALTURA_IMAGEM, int LARGURA_IMAGEM, Camera camera){
+    float* matrizPixels = new float[LARGURA_IMAGEM * ALTURA_IMAGEM * 3];
     int k = 0;
 
-    for (int j = 0; j < altura_imagem; ++j) {
-      for (int i = 0; i < largura_imagem; ++i) { 
+    for (int j = 0; j < ALTURA_IMAGEM; ++j) {
+      for (int i = 0; i < LARGURA_IMAGEM; ++i) { 
 
         //Raio que sai do olho do observador para o pixel
-        Raio r = camera.getRaio(altura_imagem, largura_imagem, i , j);
+        Raio r = camera.getRaio(ALTURA_IMAGEM, LARGURA_IMAGEM, i , j);
 
         //Calcula as raizes, verifica se há interseção entre o raio e as esferas e retorna a cor do pixel
         pair<Objeto*,double> objeto_e_raiz_mais_proximas = Objeto::calcular_objeto_mais_proximo_intersecao(r,1,(double) INFINITY);
@@ -127,7 +127,8 @@ static void montarObjetosCenarioArvoreNatal(){
       new LuzPontual(ponto(1,1,0), vetor(0.7,0.7,0.7))
     );
 
-    //Objetos do mundo  
+
+    //Objetos do mundo
     //Chão
     Objeto::objetos.push_back( 
       new Plano(ponto(0,-1.5,0), vetor(0,1,0), "textures/wood_texture.jpg")

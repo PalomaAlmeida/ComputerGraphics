@@ -15,8 +15,8 @@ class vetor{
     double z() const { return v[2]; }
 
     double a() const { 
-      v[3] += 1.0; 
-      return v[3]; }
+      return 1; 
+    }
 
     double x(double element){
       return element;

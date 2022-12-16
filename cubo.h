@@ -7,9 +7,14 @@
 
 using namespace std;
 
-class Cubo{
+class Cubo: public Objeto{
     public:
-        Cubo(double aresta, ponto centro_cubo, vetor k_d, vetor k_e, vetor k_a, int exp_especular): aresta(aresta), centro_cubo(centro_cubo), k_d(k_d), k_e(k_e), k_a(k_a), exp_especular(exp_especular){
+        Cubo(double aresta, ponto centro_cubo, vetor k_d, vetor k_e, vetor k_a, int exp_especular): aresta(aresta), centro_cubo(centro_cubo), exp_especular(exp_especular){
+
+            this->k_d = k_d;
+            this->k_e = k_e;
+            this->k_a = k_a;
+
             //Vértices de baixo do cubo
             ponto v1 = ponto(centro_cubo.x()+aresta/2, centro_cubo.y(), centro_cubo.z()+aresta/2);
             ponto v2 = ponto(centro_cubo.x()+aresta/2, centro_cubo.y(), centro_cubo.z()-aresta/2);
@@ -87,12 +92,32 @@ class Cubo{
 
         Cubo(){}
 
+        pair<double, double> calcular_intersecao(const Raio& r) override{
+            pair<double, double> menor_intersecao_malhas = {INFINITY, INFINITY};
+
+            for(auto malha : faces_cubo){
+                auto intersecao = malha->calcular_intersecao(r);
+                if(intersecao.first < menor_intersecao_malhas.first){
+                    menor_intersecao_malhas.first = intersecao.first;
+                    menor_intersecao_malhas.second = intersecao.second;
+                    malha_mais_proxima_intersecao = malha;
+                }
+            }
+            return menor_intersecao_malhas;
+        }
+
+        vetor calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima) override{
+            return malha_mais_proxima_intersecao->calcular_intensidade_luz(direcao_luz, raiz_mais_proxima);
+        }
+        
     public:
         vector<Malha*> faces_cubo;
         double aresta;
         ponto centro_cubo;
-        vetor k_d, k_e, k_a;
         int exp_especular;
+    
+    private:
+        Malha* malha_mais_proxima_intersecao;
 
 };
 

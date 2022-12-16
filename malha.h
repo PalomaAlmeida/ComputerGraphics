@@ -10,7 +10,7 @@ using namespace std;
 
 class Malha: public Objeto{
     public:
-        Malha(ponto p1, ponto p2, ponto p3, vetor k_d, vetor k_e, vetor k_a, int exp_especular): Objeto(,k_d,k_e,k_a, exp_especular){
+        Malha(vetor centro, ponto p1, ponto p2, ponto p3, vetor k_d, vetor k_e, vetor k_a, int exp_especular): Objeto(centro, k_d,k_e,k_a, exp_especular){
             lista_vertices.push_back(p1);
             lista_vertices.push_back(p2);
             lista_vertices.push_back(p3);
@@ -33,6 +33,8 @@ class Malha: public Objeto{
         }
 
     public:
+        
+
         pair<double, double> calcular_intersecao(const Raio& r) override{
 
             double t_intersect = - produto_vetor((r.origem() - lista_vertices[0]), normal) / produto_vetor(r.direcao(),normal);
@@ -108,7 +110,7 @@ class Malha: public Objeto{
 
         void atualizar_normal() {
             for(ponto * p: this->lista_vertices) p->atualiza();
-            for(ponto * p: this->lista_vertices) p->normal = p->normal * this->get_invertida();
+            for(ponto * p: this->lista_vertices) p->normal = ->normal * this->get_invertida();
         }
 
         void atualizar_normal(Matriz M) {

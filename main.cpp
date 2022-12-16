@@ -138,13 +138,9 @@ int main() {
 
               cout << "Digite o angulo de rotacao" << "\n";
               cin  >> angulo;
-              switch(opcao_rot){
-                case 1: 
-                  rotacionar_objetoX(objeto_e_raiz_mais_proximas.first, angulo);
-                case 2:
-                  rotacionar_objetoY(objeto_e_raiz_mais_proximas.first, angulo);
-                case 3:
-                  rotacionar_objetoY(objeto_e_raiz_mais_proximas.first, angulo);
+              
+              rotacionar_objeto(objeto_e_raiz_mais_proximas.first, angulo, opcao_rot);
+              
               memcpy(
                 matrizCores,
                 criar_matriz_pixels(altura_imagem,largura_imagem,camera),

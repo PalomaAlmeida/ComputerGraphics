@@ -19,26 +19,12 @@ static void deletar_objeto(Objeto* objeto){
     }
 }
 
-static void rotacionar_objetoX(Objeto* objeto, double angulo){
+static void rotacionar_objeto(Objeto* objeto, double angulo, int opcao_rot){
   for(auto i = Objeto::objetos.begin(); i!= Objeto::objetos.end(); i++){
     if(*i == objeto){
-      objeto->rotacao_x(angulo);
-    }
-  }
-}
-
-static void rotacionar_objetoY(Objeto* objeto, double angulo){
-  for(auto i = Objeto::objetos.begin(); i!= Objeto::objetos.end(); i++){
-    if(*i == objeto){
-      objeto->rotacao_y(angulo);
-    }
-  }
-}
-
-static void rotacionar_objetoZ(Objeto* objeto, double angulo){
-  for(auto i = Objeto::objetos.begin(); i!= Objeto::objetos.end(); i++){
-    if(*i == objeto){
-      objeto->rotacao_z(angulo);
+      if(opcao_rot == 1){ objeto->rotacao_x(angulo); } 
+      else if(opcao_rot == 2) { objeto->rotacao_y(angulo); }
+      else if(opcao_rot == 3) { objeto->rotacao_z(angulo); }
     }
   }
 }

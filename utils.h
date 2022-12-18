@@ -120,7 +120,7 @@ static float* criar_matriz_pixels(int ALTURA_IMAGEM, int LARGURA_IMAGEM, Camera 
 }
 
 static void montarObjetosCenarioArvoreNatal(){
-        //Luzes do cenário 
+    //Luzes do cenário 
     Luz::luz_ambiente = new LuzAmbiente(vetor(0.3,0.3,0.3));
 
     Luz::luzes_pontuais.push_back(

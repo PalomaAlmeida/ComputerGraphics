@@ -14,7 +14,7 @@ class Camera{
             double vfov,
             double altura_janela, 
             double aspect_ratio
-        ): origem(lookfrom){
+        ): origem(lookfrom), destino(lookat){
             
             auto theta = (vfov * M_PI) / 180;
             auto h = tan(theta/2);
@@ -43,6 +43,7 @@ class Camera{
 
     public:
         ponto origem;
+        ponto destino;
         Raio raio_origem;
         double hJanela, wJanela;
     

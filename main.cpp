@@ -55,7 +55,6 @@ int main() {
     sdlEngine.atualizarCanvas(matrizCores);
     sdlEngine.atualizarJanela();    
 
-    //Verifica continuamente sobre eventos na tela
     int opcao_cenario;
     bool quit_scenario = false;
     SDL_Event e;
@@ -72,16 +71,60 @@ int main() {
       cin >> opcao_cenario;
 
       switch(opcao_cenario){
-        case 1:
-        
+        case 1:    
+        {    
+          float look_from_x, look_from_y, look_from_z; 
+          float look_at_x, look_at_y, look_at_z;
+          float new_vfov;
+          float vup_x, vup_y, vup_z;
+
+          cout << "\nOrigem da camera atual (lookfrom): (" << camera.origem.x() << ", " << camera.origem.y() << ", " << camera.origem.z() << ") \n";
+          cout << "Destino da camera atual (lookat): (" << camera.destino.x() << ", " << camera.destino.y() << ", " << camera.destino.z() << ") \n";
+
+          cout << "\nSelecione a nova posição da camera (lookfrom)" << "\n";
+          cout << "x : " ; cin >> look_from_x;
+          cout << "y : " ; cin >> look_from_y;
+          cout << "z : " ; cin >> look_from_z;
+
+          cout << "\n Selecione a nova posição de destino (lookat)" << "\n";
+          cout << "x : " ; cin >> look_at_x;
+          cout << "y : " ; cin >> look_at_y;
+          cout << "z : " ; cin >> look_at_z;
+
+          cout << "\nSelecione o novo valor do view up (vup)" << "\n";
+          cout << "x : " ; cin >> vup_x;
+          cout << "y : " ; cin >> vup_y;
+          cout << "z : " ; cin >> vup_z;
+
+          cout << "\nSelecione o valor do vertical field-of-view (vfov) em graus" << "\n";
+          cin >> new_vfov;
+
+          camera = Camera(
+            ponto(look_from_x,look_from_y,look_from_z),
+            ponto(look_at_x,look_at_y,look_at_z),
+            vetor(vup_x,vup_y,vup_z),
+            new_vfov,
+            1,
+            ASPECT_RATIO
+          );       
+
+          memcpy(
+            matrizCores,
+            criar_matriz_pixels(ALTURA_IMAGEM,LARGURA_IMAGEM,camera),
+            sizeof(matrizCores)
+          );
+
+          sdlEngine.atualizarCanvas(matrizCores);
+          sdlEngine.atualizarJanela();
+          
           break;
+        }
         case 2:
+        {
           bool event_quit = false;
           cout << "Clique em um objeto na tela para modificá-lo" << "\n";
 
           while (!event_quit){ 
-      
-            //Atualizar a tela com a matriz de pixels se houver alguma mudança nos objetos do cenário
 
             while( SDL_PollEvent( &e ) ){
 
@@ -200,9 +243,79 @@ int main() {
           sdlEngine.atualizarJanela();
         
           break;
+        }
         case 3:
+        {
+          int num_lights = 0;
+          Luz* luz_selecionada;
+          int opcao_luz;
+          int opcao_intensidade;
+
+          cout << "Selecione uma das fontes de luz abaixo: " << "\n";
+
+          for(Luz* luz: Luz::luzes_pontuais){
+            cout << num_lights << " - Luz pontual " << "\n";
+            num_lights++;
+          }
+          
+          cout << num_lights <<  " - Luz ambiente " << "\n";
+          cin >> opcao_luz;
+          
+          if(opcao_luz < num_lights){
+            luz_selecionada = Luz::luzes_pontuais[opcao_luz];
+          } else if (opcao_luz == num_lights){
+            luz_selecionada = Luz::luz_ambiente;
+          }
+
+          cout << "Selecione uma ação abaixo " << "\n";
+          cout << "1 - Apagar luz" << "\n";
+          cout << "2 - Modificar intensidade" << "\n";
+          cout << "3 - Modificar posicao da luz" << "\n";
+          cin >> opcao_intensidade;
+
+          if(opcao_intensidade == 1){
+            luz_selecionada->intensidade_luz = vetor(0,0,0);
+          }
+          else if (opcao_intensidade == 2){
+            float int_x, int_y, int_z;
+            cout << "Digite o vetor de intensidade da luz (cada valor entre 0 e 1) " << "\n";
+            cout << "x: "; cin >> int_x;
+            cout << "y: "; cin >> int_y;
+            cout << "z: "; cin >> int_z;
+
+            int_x = max(min(int_x,1.0f),0.0f);
+            int_y = max(min(int_y,1.0f),0.0f);
+            int_z = max(min(int_z,1.0f),0.0f);
+            
+            luz_selecionada->intensidade_luz = vetor(int_x,int_y,int_z);
+            cout << "Luz modificada com sucesso." << "\n";
+          }
+          else{
+            float pos_x, pos_y, pos_z;
+            if(dynamic_cast<LuzPontual*>(luz_selecionada) != NULL){
+              cout << "\nDigite a nova posicao da luz pontual" << "\n";
+              cout << "x: "; cin >> pos_x;
+              cout << "y: "; cin >> pos_y;
+              cout << "z: "; cin >> pos_z;
+
+              luz_selecionada->posicao_luz = ponto(pos_x,pos_y,pos_z);
+            }
+            else{
+              cout << "\nLuz ambiente não pode ser movida." << "\n";
+            }
+          }
+
+           memcpy(
+            matrizCores,
+            criar_matriz_pixels(ALTURA_IMAGEM,LARGURA_IMAGEM,camera),
+            sizeof(matrizCores)
+          );
+
+          sdlEngine.atualizarCanvas(matrizCores);
+          sdlEngine.atualizarJanela();
+
           break;
-        
+        }
         default:
           quit_scenario = true;
           break;

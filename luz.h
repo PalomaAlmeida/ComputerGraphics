@@ -17,10 +17,8 @@ class Luz{
         Luz(){}
         Luz(vetor intensidade): intensidade_luz(intensidade), posicao_luz(vetor(0,0,0)){}
         Luz(vetor posicao, vetor intensidade): posicao_luz(posicao), intensidade_luz(intensidade){}
+        virtual ~Luz(){}
 
-        static void alterar_intensidade_luz(Luz luz, vetor intensidade_luz){
-            luz.intensidade_luz = intensidade_luz;
-        }
 };
 
 #endif

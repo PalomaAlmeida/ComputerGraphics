@@ -155,7 +155,8 @@ int main() {
                   cout << "3 - Rotação" << "\n";
                   cout << "4 - Translação" << "\n";
                   cout << "5 - Cisalhamento" << "\n";
-                  cout << "6 - Voltar" << "\n";
+                  cout << "6 - Alterar cor" << "\n";
+                  cout << "7 - Voltar" << "\n";
                   cin  >> opcao_acao;
 
                   switch(opcao_acao){
@@ -199,6 +200,7 @@ int main() {
                       cin  >> z;
                         
                       //TODO incluir chamada a função de translacao
+                      //transladar_objeto(objeto_e_raiz_mais_proximas.first, x, y, z);
                       cout << "Transladado com sucesso!" << "\n";
                       break;
 
@@ -221,6 +223,24 @@ int main() {
                       cout << "Cisalhado com sucesso!" << "\n";
                       
                       break;
+
+                    case 6: 
+                      
+                      cout << "Digite a intensidade do ka: " << "\n";
+                      cin  >> x >> y >> z;
+                      //ka(objeto_e_raiz_mais_proximas.first, x, y, z);
+
+                      cout << "Digite a intensidade do kd: " << "\n";
+                      cin  >> x >> y >> z;
+                      //kd(objeto_e_raiz_mais_proximas.first, x, y, z);
+
+                      cout << "Digite a intensidade do ke: " << "\n";
+                      cin  >> x >> y >> z;
+                      //ke(objeto_e_raiz_mais_proximas.first, x, y, z);
+
+                      cout << "Cor alterada com sucesso!" << "\n";
+                      break;
+
                     default:
                       break;
                   }  

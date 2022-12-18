@@ -75,6 +75,7 @@ class Matriz{
             v.x(this->values[0][0]);
             v.y(this->values[1][0]);
             v.z(this->values[2][0]);
+            v.a(this->values[3][0]);
 
             return v;
         }
@@ -280,15 +281,11 @@ class Matriz{
             return m;
         }
 
-        std::vector<std::vector<double>> get_values();
-        void set_values(std::vector<std::vector<double>> v);
+        int get_row(){ return this->row; }
+        void set_row(int row) { this->row = row; }
 
-
-        int get_row();
-        void set_row(int row);
-
-        int get_col();
-        void set_col(int col);
+        int get_col(){ return this->row; }
+        void set_col(int col){ this->col = col; }
 
 };
 

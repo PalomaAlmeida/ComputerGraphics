@@ -58,6 +58,34 @@ static void cisalhamento_objeto(Objeto* objeto, double angulo, int opcao_cis){
   }
 }
 
+static void ka(Objeto* objeto, double x, double y, double z){
+  for(auto i = Objeto::objetos.begin(); i!= Objeto::objetos.end(); i++){
+    if(*i == objeto){
+      objeto->set_ka(vetor(x, y, z));
+    }
+  }
+}
+
+static void kd(Objeto* objeto, double x, double y, double z){
+  for(auto i = Objeto::objetos.begin(); i!= Objeto::objetos.end(); i++){
+    if(*i == objeto){
+      objeto->set_kd(vetor(x, y, z));
+    }
+  }
+}
+
+static void ke(Objeto* objeto, double x, double y, double z){
+  for(auto i = Objeto::objetos.begin(); i!= Objeto::objetos.end(); i++){
+    if(*i == objeto){
+      objeto->set_ke(vetor(x, y, z));
+    }
+  }
+}
+
+// static void camera_mundo(){
+//   Objeto::camera_para_mundo()
+// }
+
 static string identificar_objeto(Objeto* objeto){
     if(dynamic_cast<Esfera*>(objeto) != NULL){
       return "Esfera";
@@ -165,9 +193,9 @@ static void montarObjetosCenarioArvoreNatal(){
     );
 
     //Cubo
-    Objeto::objetos.push_back(
+    /*Objeto::objetos.push_back(
       new Cubo(0.4, ponto(0,-1.5,-1.65), vetor(1,0.078,0.576),vetor(1,0.078,0.576),vetor(1,0.078,0.567), 100)
-    );
+    );*/
 
     //Esfera
     Objeto::objetos.push_back(

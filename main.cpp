@@ -73,7 +73,18 @@ int main() {
 
       switch(opcao_cenario){
         case 1:
-        
+          int opcao_modificacao = 0;
+          int x, y, z = 0;
+
+          cout << "\n" << "Selecione uma das opções abaixo" << "\n";
+          cout << "1 - Modificar posição do olho do observador " << "\n";
+          cout << "2 - Modificar ponto de visão (look at point)" << "\n";
+          cout << "3 - Modificar ponto de vista (view up point)" << "\n";          
+          cout << "4 - Modificar tamanho da janela" << "\n";
+          cout << "5 - Modificar a distância focal" << "\n";
+          cin >> opcao_modificacao;
+
+          //TODO incluir chamada a um novo switch para tratar a opcao escolhida e realizar a modificacao necessaria
           break;
         case 2:
           bool event_quit = false;
@@ -112,7 +123,8 @@ int main() {
                   cout << "3 - Rotação" << "\n";
                   cout << "4 - Translação" << "\n";
                   cout << "5 - Cisalhamento" << "\n";
-                  cout << "6 - Voltar" << "\n";
+                  cout << "6 - Alterar cor" << "\n";
+                  cout << "7 - Voltar" << "\n";
                   cin  >> opcao_acao;
 
                   switch(opcao_acao){
@@ -156,6 +168,7 @@ int main() {
                       cin  >> z;
                         
                       //TODO incluir chamada a função de translacao
+                      //transladar_objeto(objeto_e_raiz_mais_proximas.first, x, y, z);
                       cout << "Transladado com sucesso!" << "\n";
                       break;
 
@@ -178,6 +191,24 @@ int main() {
                       cout << "Cisalhado com sucesso!" << "\n";
                       
                       break;
+
+                    case 6: 
+                      
+                      cout << "Digite a intensidade do ka: " << "\n";
+                      cin  >> x >> y >> z;
+                      //ka(objeto_e_raiz_mais_proximas.first, x, y, z);
+
+                      cout << "Digite a intensidade do kd: " << "\n";
+                      cin  >> x >> y >> z;
+                      //kd(objeto_e_raiz_mais_proximas.first, x, y, z);
+
+                      cout << "Digite a intensidade do ke: " << "\n";
+                      cin  >> x >> y >> z;
+                      //ke(objeto_e_raiz_mais_proximas.first, x, y, z);
+
+                      cout << "Cor alterada com sucesso!" << "\n";
+                      break;
+
                     default:
                       break;
                   }  

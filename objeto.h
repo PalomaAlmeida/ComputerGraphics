@@ -78,6 +78,13 @@ class Objeto{
             stbi_image_free(image);
         }
 
+        void set_kd(vetor kd){ this->k_d = kd; }
+        vetor get_kd(){ return k_d; }
+        void set_ka(vetor ka){ this->k_a = ka; }
+        vetor get_ka(){ return k_a; }
+        void set_ke(vetor ke){ this->k_e = ke; }
+        vetor get_ke(){ return k_e; }
+
         void set_current_color(int i, int j) { 
             auto image_pixels = this->image_pixels[i % this->height][j % this->width];
             this->k_d = vetor(image_pixels[0], image_pixels[1], image_pixels[2]);

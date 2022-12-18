@@ -5,18 +5,16 @@
 
 class vetor{
   public:
-    double v[3];
+    double v[4];
   public:
     vetor() : v{0,0,0} {}
-    vetor(double e0, double e1, double e2) : v{e0, e1, e2} {}
+    vetor(double e0, double e1, double e2) : v{e0, e1, e2, 1} {}
+    vetor(double e0, double e1, double e2, double e3) : v{e0, e1, e2, e3} {}
 
     double x() const { return v[0]; }
     double y() const { return v[1]; }
     double z() const { return v[2]; }
-
-    double a() const { 
-      return 1; 
-    }
+    double a() const { return v[3]; }
 
     double x(double element){
       return element;
@@ -27,6 +25,10 @@ class vetor{
     }
 
     double z(double element){
+      return element;
+    }
+
+    double a(double element){
       return element;
     }
 

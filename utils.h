@@ -202,3 +202,19 @@ static void montarObjetosCenarioArvoreNatal(){
       new Esfera(ponto(0,0.95,-2), 0.05, vetor(0.854, 0.647, 0.125), vetor(0.854, 0.647, 0.125), vetor(0.854, 0.647, 0.125), 1)
     );
 }
+
+static void montarObjetosCenarioPraca(){
+    //Luzes do cenário 
+    Luz::luz_ambiente = new LuzAmbiente(vetor(0.3,0.3,0.3));
+
+    Luz::luzes_pontuais.push_back(
+      new LuzPontual(ponto(1,1,0), vetor(0.7,0.7,0.7))
+    );
+
+    //Chão
+    Objeto::objetos.push_back( 
+      new Plano(ponto(0,-1.5,0), vetor(0,1,0), "textures/grama_texture.jpg")
+    );
+
+
+}

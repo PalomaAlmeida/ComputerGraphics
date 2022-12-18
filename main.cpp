@@ -17,23 +17,23 @@ vector<Luz*> Luz::luzes_pontuais = vector<Luz*>();
 Luz* Luz::luz_ambiente = new Luz();
 
 //Razão entre a altura e largura da tela
-const double ASPECT_RATIO = 1.0/1.0;
+const double ASPECT_RATIO = 16.0/9.0;
 
 // Qtd pixels (divisão dos quadrados da "tela de mosquito")
-const int ALTURA_IMAGEM = 500;
-const int LARGURA_IMAGEM = (ALTURA_IMAGEM/ASPECT_RATIO);
+const int LARGURA_IMAGEM = 1000;
+const int ALTURA_IMAGEM = (LARGURA_IMAGEM/ASPECT_RATIO);
 
 int main() {
 
     float matrizCores[LARGURA_IMAGEM * ALTURA_IMAGEM * 3];
-
+    
     SDLEngine sdlEngine{ "Árvore de Natal"
                     ,LARGURA_IMAGEM, ALTURA_IMAGEM
                     ,LARGURA_IMAGEM, ALTURA_IMAGEM
                   };
 
     // Origem (olho do observador)
-    auto origem = ponto(0, 0, 0);
+    auto origem = ponto(1, 1, 0);
 
     //Vfov (define um "zoom" para a camera) em graus
     double vfov = 90;
@@ -42,7 +42,7 @@ int main() {
     Camera camera = Camera(origem,ponto(0,0,-1),ponto(0,1,0),vfov,2,ASPECT_RATIO);
     
     //Adiciona os objetos ao cenário
-    montarObjetosCenarioArvoreNatal();
+    montarObjetosCenarioPraca();
 
     //Cria a matriz inicial de pixels
 

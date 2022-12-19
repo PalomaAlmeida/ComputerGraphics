@@ -12,15 +12,15 @@
 using namespace std;
 
 vector<Objeto*> Objeto::objetos = vector<Objeto*>();
-vector<Luz*> Luz::luzes_pontuais = vector<Luz*>();
+vector<Luz*> Luz::luzes = vector<Luz*>();
 
 Luz* Luz::luz_ambiente = new Luz();
 
 //Razão entre a altura e largura da tela
-const double ASPECT_RATIO = 16.0/9.0;
+const double ASPECT_RATIO = 1.0/1.0;
 
 // Qtd pixels (divisão dos quadrados da "tela de mosquito")
-const int LARGURA_IMAGEM = 1000;
+const int LARGURA_IMAGEM = 700;
 const int ALTURA_IMAGEM = (LARGURA_IMAGEM/ASPECT_RATIO);
 
 int main() {
@@ -33,7 +33,7 @@ int main() {
                   };
 
     // Origem (olho do observador)
-    auto origem = ponto(1, 1, 0);
+    auto origem = ponto(0, 0, 0);
 
     //Vfov (define um "zoom" para a camera) em graus
     double vfov = 90;
@@ -273,7 +273,7 @@ int main() {
 
           cout << "Selecione uma das fontes de luz abaixo: " << "\n";
 
-          for(Luz* luz: Luz::luzes_pontuais){
+          for(Luz* luz: Luz::luzes){
             cout << num_lights << " - Luz pontual " << "\n";
             num_lights++;
           }
@@ -282,7 +282,7 @@ int main() {
           cin >> opcao_luz;
           
           if(opcao_luz < num_lights){
-            luz_selecionada = Luz::luzes_pontuais[opcao_luz];
+            luz_selecionada = Luz::luzes[opcao_luz];
           } else if (opcao_luz == num_lights){
             luz_selecionada = Luz::luz_ambiente;
           }

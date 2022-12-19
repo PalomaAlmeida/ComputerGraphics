@@ -1,5 +1,6 @@
 #include <iostream>
 #include "luz_ambiente.h"
+#include "luz_spot.h"
 #include "objeto.h"
 #include "plano.h"
 #include "camera.h"
@@ -149,12 +150,15 @@ static float* criar_matriz_pixels(int ALTURA_IMAGEM, int LARGURA_IMAGEM, Camera 
 
 static void montarObjetosCenarioArvoreNatal(){
     //Luzes do cenário 
-    Luz::luz_ambiente = new LuzAmbiente(vetor(0.3,0.3,0.3));
+    //Luz::luz_ambiente = new LuzAmbiente(vetor(0.3,0.3,0.3));
 
-    Luz::luzes_pontuais.push_back(
-      new LuzPontual(ponto(1,1,0), vetor(0.7,0.7,0.7))
+    Luz::luzes.push_back(
+      new LuzPontual(ponto(1,1,0), vetor(0.3,0.3,0.3))
     );
 
+    Luz::luzes.push_back(
+      new LuzSpot(ponto(0.5,0,0), vetor(0.7,0.7,0.7), 30, 10, vetor(0,0,-1))
+    );
 
     //Objetos do mundo
     //Chão
@@ -207,14 +211,19 @@ static void montarObjetosCenarioPraca(){
     //Luzes do cenário 
     Luz::luz_ambiente = new LuzAmbiente(vetor(0.3,0.3,0.3));
 
-    Luz::luzes_pontuais.push_back(
+    /*Luz::luzes.push_back(
       new LuzPontual(ponto(1,1,0), vetor(0.7,0.7,0.7))
+    );*/
+
+    Luz::luzes.push_back(
+      new LuzSpot(ponto(0,0,0), vetor(0.7,0.7,0.7), 30, 10, vetor(0,0,-1))
     );
 
     //Chão
     Objeto::objetos.push_back( 
       new Plano(ponto(0,-1.5,0), vetor(0,1,0), "textures/grama_texture.jpg")
     );
+
 
 
 }

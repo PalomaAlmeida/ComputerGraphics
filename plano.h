@@ -5,6 +5,7 @@
 #include "vetor.h"
 #include "raio.h"
 #include "luz.h"
+#include "luz_spot.h"
 #include <cmath>
 
 
@@ -41,9 +42,15 @@ class Plano: public Objeto{
 
             ponto p = direcao_luz.origem() + t*direcao_luz.direcao();
 
-            for(auto ponto_luz: Luz::luzes_pontuais){
+            for(auto ponto_luz: Luz::luzes){
 
-                auto L = ponto_luz->posicao_luz- p;
+                auto L = ponto_luz->posicao_luz - p;
+                vetor intensidade_luz = ponto_luz->intensidade_luz;
+            
+                if(dynamic_cast<LuzSpot*>(ponto_luz) != NULL){
+                    intensidade_luz = dynamic_cast<LuzSpot*>(ponto_luz)->calcular_intensidade_luz_spot(L) * ponto_luz->intensidade_luz;
+                }
+
                 auto n_dot_l = produto_vetor(normal/normal.comprimento(),L);
 
                 Raio p_int(p,L);
@@ -51,14 +58,14 @@ class Plano: public Objeto{
                 if(plano_possui_sombra){continue;}
 
                 if(n_dot_l > 0){
-                    i += (ponto_luz->intensidade_luz * k_d) * (n_dot_l  / (normal.comprimento() * L.comprimento()));
+                    i += (intensidade_luz * k_d) * (n_dot_l  / (normal.comprimento() * L.comprimento()));
                 }
 
                 if(exp_especular != -1){
                     auto R = 2*normal*n_dot_l - L;
                     auto r_dot_l = produto_vetor(R,-direcao_luz.direcao());
                     if(r_dot_l > 0){
-                        i += (ponto_luz->intensidade_luz * k_e) * pow(r_dot_l/(R.comprimento()*L.comprimento()),exp_especular);
+                        i += (intensidade_luz * k_e) * pow(r_dot_l/(R.comprimento()*L.comprimento()),exp_especular);
                     }
                 }
             }

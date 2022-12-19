@@ -10,7 +10,7 @@ class Luz{
     public:
         vetor posicao_luz;
         vetor intensidade_luz;
-        static vector<Luz*> luzes_pontuais;
+        static vector<Luz*> luzes;
         static Luz* luz_ambiente;
 
     public:

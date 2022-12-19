@@ -47,12 +47,18 @@ class Cone: public Objeto{
 
             ponto p = direcao_luz.origem() + raiz_mais_proxima*direcao_luz.direcao();
 
-            for(auto ponto_luz: Luz::luzes_pontuais){
+            for(auto ponto_luz: Luz::luzes){
 
                 auto vetor_normal_cone = p - centro_base;
                 auto normal_cone = vetor_normal_cone/vetor_normal_cone.comprimento();
                 auto L = ponto_luz->posicao_luz- p;
                 auto n_dot_l = produto_vetor(normal_cone,L);
+
+                vetor intensidade_luz = ponto_luz->intensidade_luz;
+            
+                if(dynamic_cast<LuzSpot*>(ponto_luz) != NULL){
+                    intensidade_luz = dynamic_cast<LuzSpot*>(ponto_luz)->calcular_intensidade_luz_spot(L) * ponto_luz->intensidade_luz;
+                }
 
                 Raio p_int(p,L);
                 bool objeto_possui_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1).second != INFINITY;
@@ -60,14 +66,14 @@ class Cone: public Objeto{
                 if(objeto_possui_sombra){continue;}
 
                 if(n_dot_l > 0){
-                    i += (ponto_luz->intensidade_luz * k_d) * (n_dot_l  / (normal_cone.comprimento() * L.comprimento())) ;
+                    i += (intensidade_luz * k_d) * (n_dot_l  / (normal_cone.comprimento() * L.comprimento())) ;
                 }
 
                 if(exp_especular != -1){
                     auto R = 2*normal_cone*n_dot_l - L;
                     auto r_dot_v = produto_vetor(R,-direcao_luz.direcao());
                     if(r_dot_v > 0){
-                        i += (ponto_luz->intensidade_luz * k_e) * pow(r_dot_v/(R.comprimento()*L.comprimento()),exp_especular);
+                        i += (intensidade_luz * k_e) * pow(r_dot_v/(R.comprimento()*L.comprimento()),exp_especular);
                     }
                 }
             }

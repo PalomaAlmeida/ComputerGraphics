@@ -224,6 +224,39 @@ static void montarObjetosCenarioPraca(){
       new Plano(ponto(0,-1.5,0), vetor(0,1,0), "textures/grama_texture.jpg")
     );
 
+    // Arvores
+    Objeto::objetos.push_back(
+      new Cone(ponto(1.5,-0.1,-2), vetor(0,1,0), 1, 0.9, 1, vetor(0,1,1), vetor(0,1,0.498), vetor(0,1,0.498))
+    );
+
+    Objeto::objetos.push_back(
+      new Cilindro(ponto(1.5,-0.6,-2), vetor(0,1,0), 0.9, 0.05, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
+    );
+
+    Objeto::objetos.push_back(
+      new Cone(ponto(-1.5,-0.1,-2), vetor(0,1,0), 1, 0.9, 1, vetor(0,1,0.498), vetor(0,1,0.498), vetor(0,1,0.498))
+    );
+
+    Objeto::objetos.push_back(
+      new Cilindro(ponto(-1.5,-0.6, -2), vetor(0,1,0), 0.9, 0.05, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
+    );
+
+    //Fonte
+    //Cubo
+    Cubo* cubo = new Cubo(0.75, ponto(0,-1.5,-2), vetor(1,0.078,0.576),vetor(1,0.078,0.576),vetor(1,0.078,0.567), 100);
+
+    for(Malha* face: cubo->faces_cubo){
+      Objeto::objetos.push_back(face);
+    }
+
+    Objeto::objetos.push_back(
+      new Cilindro(ponto(0,-0.9,-2), vetor(0,1,0), 0.5, 0.3, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
+    );
+
+    Objeto::objetos.push_back(
+      new Cilindro(ponto(0,-0.6,-2), vetor(0,1,0), 0.5, 0.2, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
+    );
+
 
 
 }

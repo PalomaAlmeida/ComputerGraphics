@@ -8,7 +8,7 @@ using namespace std;
 
 class Cone: public Objeto{
     public: 
-        Cone(ponto c, vetor d, double h, double r, double especular, vetor k_d, vetor k_e, vetor k_a): centro_base(c), direcao(d), altura(h), raio_base(r), Objeto(k_d,k_e,k_a, especular){}
+        Cone(ponto c, vetor d, double h, double r, double especular, vetor k_d, vetor k_e, vetor k_a): centro_base(c), direcao(d), altura(h), raio_base(r), Objeto(c, k_d,k_e,k_a, especular){}
 
         pair<double,double> calcular_intersecao(const Raio& r) override{
             auto vertice = centro_base + altura*direcao;
@@ -42,33 +42,36 @@ class Cone: public Objeto{
             return {raiz1,raiz2};
         }
 
-        vetor calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima, const luz_pontual& ponto_luz, vetor luz_ambiente) override {
-            vetor i = luz_ambiente * k_a;
+        vetor calcular_intensidade_luz(const Raio& direcao_luz, double raiz_mais_proxima) override {
+            vetor i = Luz::luz_ambiente->intensidade_luz * k_a;
 
             ponto p = direcao_luz.origem() + raiz_mais_proxima*direcao_luz.direcao();
 
-            auto vetor_normal_cone = p - centro_base;
-            auto normal_cone = vetor_normal_cone/vetor_normal_cone.comprimento();
-            auto L = ponto_luz.posicao_ponto()- p;
-            auto n_dot_l = produto_vetor(normal_cone,L);
+            for(auto ponto_luz: Luz::luzes_pontuais){
 
-            Raio p_int(p,L);
-            bool objeto_possui_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1).second != INFINITY;
+                auto vetor_normal_cone = p - centro_base;
+                auto normal_cone = vetor_normal_cone/vetor_normal_cone.comprimento();
+                auto L = ponto_luz->posicao_luz- p;
+                auto n_dot_l = produto_vetor(normal_cone,L);
 
-            if(objeto_possui_sombra){return luz_ambiente * k_a;}
+                Raio p_int(p,L);
+                bool objeto_possui_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1).second != INFINITY;
 
-            if(n_dot_l > 0){
-                i += (ponto_luz.intensidade_luz() * k_d) * (n_dot_l  / (normal_cone.comprimento() * L.comprimento())) ;
-            }
+                if(objeto_possui_sombra){continue;}
 
-            if(exp_especular != -1){
-                auto R = 2*normal_cone*n_dot_l - L;
-                auto r_dot_v = produto_vetor(R,-direcao_luz.direcao());
-                if(r_dot_v > 0){
-                    i += (ponto_luz.intensidade_luz() * k_e) * pow(r_dot_v/(R.comprimento()*L.comprimento()),exp_especular);
+                if(n_dot_l > 0){
+                    i += (ponto_luz->intensidade_luz * k_d) * (n_dot_l  / (normal_cone.comprimento() * L.comprimento())) ;
+                }
+
+                if(exp_especular != -1){
+                    auto R = 2*normal_cone*n_dot_l - L;
+                    auto r_dot_v = produto_vetor(R,-direcao_luz.direcao());
+                    if(r_dot_v > 0){
+                        i += (ponto_luz->intensidade_luz * k_e) * pow(r_dot_v/(R.comprimento()*L.comprimento()),exp_especular);
+                    }
                 }
             }
-
+            
             //Dividir todos pela maior componente de i se alguma componente for maior que 1
             if(i.x() > 1 || i.y() > 1 || i.z() > 1){
                 double maior_componente = max( max(i.x(),i.y()) , i.z());
@@ -77,6 +80,23 @@ class Cone: public Objeto{
 
             return i;
         }
+
+        void transformacao(){
+            Matriz m = Matriz::identidade(4);
+            for(Matriz M:this->get_transformation()) m = m * M;
+
+            this->centro = (m * Matriz::vetor_para_matriz(this->centro, true)).matriz_para_vetor();  
+            this->direcao = (m * Matriz::vetor_para_matriz(this->direcao, true)).matriz_para_vetor(); 
+            this->atualizar_normal();
+
+            this->limpar_transformacao();
+        }
+
+        void atualizar_normal() {
+            vetor vc = (direcao-this->centro); 
+            altura = vc.comprimento();
+        }
+        void atualizar_normal(Matriz m) {}
 
     public:
         ponto centro_base;

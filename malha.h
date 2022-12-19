@@ -1,96 +1,96 @@
-#ifndef MALHA_H
-#define MALHA_H
+// #ifndef MALHA_H
+// #define MALHA_H
 
-#include <iostream>
-#include "objeto.h"
-#include "vetor.h"
-#include <vector>
+// #include <iostream>
+// #include "objeto.h"
+// #include "vetor.h"
+// #include <vector>
 
-using namespace std;
+// using namespace std;
 
-class Malha: public Objeto{
-    public:
-        Malha(ponto p1, ponto p2, ponto p3, vetor k_d, vetor k_e, vetor k_a, int exp_especular): Objeto(k_d,k_e,k_a, exp_especular){
-            lista_vertices.push_back(p1);
-            lista_vertices.push_back(p2);
-            lista_vertices.push_back(p3);
+// class Malha: public Objeto{
+//     public:
+//         Malha(ponto p1, ponto p2, ponto p3, vetor k_d, vetor k_e, vetor k_a, int exp_especular): Objeto(k_d,k_e,k_a, exp_especular){
+//             lista_vertices.push_back(p1);
+//             lista_vertices.push_back(p2);
+//             lista_vertices.push_back(p3);
 
-            r1 = p2-p1;
-            r2 = p3-p1;
-            normal = produto_vetorial(r1,r2);
-        }
+//             r1 = p2-p1;
+//             r2 = p3-p1;
+//             normal = produto_vetorial(r1,r2);
+//         }
         
-        Malha(){}
+//         Malha(){}
 
-        Malha(ponto p1, ponto p2, ponto p3, const char* fileName): Objeto(fileName){
-            lista_vertices.push_back(p1);
-            lista_vertices.push_back(p2);
-            lista_vertices.push_back(p3);
+//         Malha(ponto p1, ponto p2, ponto p3, const char* fileName): Objeto(fileName){
+//             lista_vertices.push_back(p1);
+//             lista_vertices.push_back(p2);
+//             lista_vertices.push_back(p3);
 
-            r1 = p2-p1;
-            r2 = p3-p1;
-            normal = produto_vetorial(r1,r2);
-        }
+//             r1 = p2-p1;
+//             r2 = p3-p1;
+//             normal = produto_vetorial(r1,r2);
+//         }
 
-    public:
-        pair<double, double> calcular_intersecao(const Raio& r) override{
+//     public:
+//         pair<double, double> calcular_intersecao(const Raio& r) override{
 
-            double t_intersect = - produto_vetor((r.origem() - lista_vertices[0]), normal) / produto_vetor(r.direcao(),normal);
-            vetor p_intersecao = r.origem() + t_intersect * r.direcao();
+//             double t_intersect = - produto_vetor((r.origem() - lista_vertices[0]), normal) / produto_vetor(r.direcao(),normal);
+//             vetor p_intersecao = r.origem() + t_intersect * r.direcao();
 
-            ponto v = p_intersecao - lista_vertices[0];
+//             ponto v = p_intersecao - lista_vertices[0];
 
-            double c1 = produto_vetor(produto_vetorial((lista_vertices[2] - p_intersecao), (lista_vertices[0] - p_intersecao)), normal) / produto_vetor(r1, produto_vetorial(r2, normal));
-            double c2 = produto_vetor(produto_vetorial((lista_vertices[0] - p_intersecao), (lista_vertices[1] - p_intersecao)), normal) / produto_vetor(r1, produto_vetorial(r2, normal));
-            double c3 = 1 - c1 - c2;
+//             double c1 = produto_vetor(produto_vetorial((lista_vertices[2] - p_intersecao), (lista_vertices[0] - p_intersecao)), normal) / produto_vetor(r1, produto_vetorial(r2, normal));
+//             double c2 = produto_vetor(produto_vetorial((lista_vertices[0] - p_intersecao), (lista_vertices[1] - p_intersecao)), normal) / produto_vetor(r1, produto_vetorial(r2, normal));
+//             double c3 = 1 - c1 - c2;
 
-            if(c1 < 0 || c2 < 0 || c3 < 0){
-                return {INFINITY,INFINITY};
-            }
+//             if(c1 < 0 || c2 < 0 || c3 < 0){
+//                 return {INFINITY,INFINITY};
+//             }
             
-            return {t_intersect,t_intersect};
+//             return {t_intersect,t_intersect};
 
-        }
-        vetor calcular_intensidade_luz(const Raio& direcao_luz, double t, const luz_pontual& ponto_luz, vetor luz_ambiente) override {
-            vetor i = luz_ambiente * k_a;
+//         }
+//         vetor calcular_intensidade_luz(const Raio& direcao_luz, double t) override {
+//             vetor i = luz_ambiente * k_a;
 
-            ponto p = direcao_luz.origem() + t*direcao_luz.direcao();
+//             ponto p = direcao_luz.origem() + t*direcao_luz.direcao();
 
-            auto L = ponto_luz.posicao_ponto()- p;
-            auto n_dot_l = produto_vetor(normal/normal.comprimento(),L);
+//             auto L = ponto_luz.posicao_ponto()- p;
+//             auto n_dot_l = produto_vetor(normal/normal.comprimento(),L);
 
-            Raio p_int(p,L);
-            bool plano_possui_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1).second != INFINITY;
-            if(plano_possui_sombra){return i;}
+//             Raio p_int(p,L);
+//             bool plano_possui_sombra = Objeto::calcular_objeto_mais_proximo_intersecao(p_int,0.001,1).second != INFINITY;
+//             if(plano_possui_sombra){return i;}
 
-            if(n_dot_l > 0){
-                i += (ponto_luz.intensidade_luz() * k_d) * (n_dot_l  / (normal.comprimento() * L.comprimento()));
-            }
+//             if(n_dot_l > 0){
+//                 i += (ponto_luz.intensidade_luz() * k_d) * (n_dot_l  / (normal.comprimento() * L.comprimento()));
+//             }
 
-            if(exp_especular != -1){
-                auto R = 2*normal*n_dot_l - L;
-                auto r_dot_l = produto_vetor(R,-direcao_luz.direcao());
-                if(r_dot_l > 0){
-                    i += (ponto_luz.intensidade_luz() * k_e) * pow(r_dot_l/(R.comprimento()*L.comprimento()),exp_especular);
-                }
-            }
+//             if(exp_especular != -1){
+//                 auto R = 2*normal*n_dot_l - L;
+//                 auto r_dot_l = produto_vetor(R,-direcao_luz.direcao());
+//                 if(r_dot_l > 0){
+//                     i += (ponto_luz.intensidade_luz() * k_e) * pow(r_dot_l/(R.comprimento()*L.comprimento()),exp_especular);
+//                 }
+//             }
             
-            //Dividir todos pela maior componente de i se alguma componente for maior que 1
-            if(i.x() > 1 || i.y() > 1 || i.z() > 1){
-                double maior_componente = max( max(i.x(),i.y()) , i.z());
-                return i/maior_componente;
-            }
+//             //Dividir todos pela maior componente de i se alguma componente for maior que 1
+//             if(i.x() > 1 || i.y() > 1 || i.z() > 1){
+//                 double maior_componente = max( max(i.x(),i.y()) , i.z());
+//                 return i/maior_componente;
+//             }
 
-            return i;
-        }
+//             return i;
+//         }
 
         
-    public:
-        vector<ponto> lista_vertices;
-        vetor r1, r2;
-        vetor normal;
+//     public:
+//         vector<ponto> lista_vertices;
+//         vetor r1, r2;
+//         vetor normal;
 
-};
+// };
 
 
-#endif
+// #endif

@@ -13,39 +13,49 @@
 #include "cubo.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+#include "utils.h"
 
 using namespace std;
 
 vector<Objeto*> Objeto::objetos = vector<Objeto*>();
 
 auto posicao_luz1 = ponto(-1,1.4,-0.2);
-auto intensidade_luz = vetor(0.7,0.7,0.7);
-auto intensidade_luz_ambiente = vetor(0.3,0.3,0.3);
-luz_pontual luz1(posicao_luz1, intensidade_luz);
+vector<Luz*> Luz::luzes_pontuais = vector<Luz*>();
 
-vector<luz_pontual> luzes;
+Luz* Luz::luz_ambiente = new Luz(vetor(0.3,0.3,0.3));
+//auto intensidade_luz = vetor(0.7,0.7,0.7);
+//auto intensidade_luz_ambiente = vetor(0.3,0.3,0.3);
+// luz_pontual luz1(posicao_luz1, intensidade_luz);
 
-Cor calcular_cor_pixel(Objeto* objeto_mais_proximo, double raiz_mais_proxima, Raio& r, vetor luz_ambiente, int i, int j){
-  Cor cor_pixel;
+// vector<luz_pontual> luzes;
+
+const double ASPECT_RATIO = 1.0/1.0;
+
+// Qtd pixels (divisão dos quadrados da "tela de mosquito")
+const int ALTURA_IMAGEM = 500;
+const int LARGURA_IMAGEM = (ALTURA_IMAGEM/ASPECT_RATIO);
+
+int main() {    
+    float matrizCores[LARGURA_IMAGEM * ALTURA_IMAGEM * 3];
     
-  if(!isinf(raiz_mais_proxima)){
+    // Origem (olho do observador)
+    auto origem = ponto(0, 0, 0);
 
-    if(objeto_mais_proximo->hasTexture) {
-      objeto_mais_proximo->set_current_color(i, j);
-    }
+    //Vfov (define um "zoom" para a camera) em graus
+    double vfov = 90;
 
-    vetor intensidade_luz_ponto = objeto_mais_proximo->calcular_intensidade_luz(r,raiz_mais_proxima, luz1, luz_ambiente);
-    cor_pixel =  Cor(255,255,255) * intensidade_luz_ponto;
-  }
-  else{
-    cor_pixel = Cor(100,100,100);
-  }
+    //Camera
+    Camera camera = Camera(origem,ponto(0,0,-1),ponto(0,1,0),vfov,2,ASPECT_RATIO);
+    
+    //Adiciona os objetos ao cenário
+    montarObjetosCenarioArvoreNatal();
 
-  return cor_pixel;
-}
-
-int main() {
-  
+    //Cria a matriz inicial de pixels
+    memcpy(
+      matrizCores,
+      criar_matriz_pixels(ALTURA_IMAGEM,LARGURA_IMAGEM,camera),
+      sizeof(matrizCores)
+    );
     // Qtd pixels (divisão dos quadrados da "tela de mosquito")
 
     const int largura_imagem = 500;
@@ -60,9 +70,6 @@ int main() {
 
     auto Dx = wJanela / (largura_imagem);
     auto Dy = hJanela / (altura_imagem); 
-
-    // Origem (olho do observador)
-    auto origem = ponto(0, 0, 0);
 
     //Chão
     Objeto::objetos.push_back( 
@@ -99,12 +106,12 @@ int main() {
       new Cilindro(ponto(0,-1.5,-2), vetor(0,1,0), 0.9, 0.05, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
     );
 
-    //Cubo
-    Cubo* cubo = new Cubo(0.4, ponto(0,-1.5,-1.65), vetor(1,0.078,0.576),vetor(1,0.078,0.576),vetor(1,0.078,0.567), 100);
+    // //Cubo
+    // Cubo* cubo = new Cubo(0.4, ponto(0,-1.5,-1.65), vetor(1,0.078,0.576),vetor(1,0.078,0.576),vetor(1,0.078,0.567), 100);
 
-    for(Malha* face: cubo->faces_cubo){
-      Objeto::objetos.push_back(face);
-    }
+    // for(Malha* face: cubo->faces_cubo){
+    //   Objeto::objetos.push_back(face);
+    // }
 
     //Esfera
     Objeto::objetos.push_back(
@@ -124,7 +131,7 @@ int main() {
         //Calcula as raizes, verifica se há interseção entre o raio e as esferas e retorna a cor do pixel
 
         pair<Objeto*,double> objeto_e_raiz_mais_proximas = Objeto::calcular_objeto_mais_proximo_intersecao(r,1,(double) INFINITY);
-        Cor cor_pixel = calcular_cor_pixel(objeto_e_raiz_mais_proximas.first, objeto_e_raiz_mais_proximas.second, r, intensidade_luz_ambiente, i, j);
+        Cor cor_pixel = calcular_cor_pixel(objeto_e_raiz_mais_proximas.first, objeto_e_raiz_mais_proximas.second, r, i, j);
 
         pintar(std::cout, cor_pixel);
       }

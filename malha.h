@@ -5,57 +5,31 @@
 #include "objeto.h"
 #include "vetor.h"
 #include <vector>
-#include <cmath>
 
 using namespace std;
 
 class Malha: public Objeto{
     public:
-        Malha(vetor centro, ponto p1, ponto p2, ponto p3, vetor k_d, vetor k_e, vetor k_a, int exp_especular): Objeto(centro, k_d,k_e,k_a, exp_especular){}
-        
+        Malha(ponto p1, ponto p2, ponto p3, vetor k_d, vetor k_e, vetor k_a, int exp_especular): k_a(k_a), k_d(k_d), k_e(k_e), exp_especular(exp_especular){
+            lista_vertices.push_back(p1);
+            lista_vertices.push_back(p2);
+            lista_vertices.push_back(p3);
+
+            r1 = p2-p1;
+            r2 = p3-p1;
+            normal = produto_vetorial(r1,r2);
+        }
+
+        Malha(ponto p1, ponto p2, ponto p3, const char* fileName): Objeto(fileName){
+            lista_vertices.push_back(p1);
+            lista_vertices.push_back(p2);
+            lista_vertices.push_back(p3);
+
+            r1 = p2-p1;
+            r2 = p3-p1;
+            normal = produto_vetorial(r1,r2);
+        }
         Malha(){}
-
-        Malha(ponto p1, ponto p2, ponto p3, const char* fileName): Objeto(fileName){}
-    
-    public:
-        vetor centro;
-
-        class Face {    
-            public:
-                ponto p1, p2, p3;
-                vetor normal;
-
-            public:
-                Face(){}
-                Face(ponto p1, ponto p2, ponto p3): p1(p1), p2(p2), p3(p3){ 
-                    calcula_normal();
-                }
-
-                void calcula_normal(){
-                    normal = produto_vetorial((p2-p1),(p3-p1));
-                }
-
-                void set_p1(double aresta, ponto centro){
-                    this->p1 = ponto(centro.x()+aresta/2, centro.y(), centro.z()+aresta/2);
-                }
-                void set_p2(double aresta, ponto centro){
-                    this->p2 = ponto(centro.x()+aresta/2, centro.y(), centro.z()+aresta/2);
-                }
-                void set_p3(double aresta, ponto centro){
-                    this->p3 = ponto(centro.x()+aresta/2, centro.y(), centro.z()+aresta/2);
-                }
-
-                vetor get_p1(){ return p1; }
-                vetor get_p2(){ return p2;}
-                vetor get_p3(){ return p3; }
-
-                vetor get_normal(){ return normal; }
-        };
-
-        std::vector<Face*> faces;
-
-    public:
-        std::vector<vetor*> vertices;
 
         pair<double, double> calcular_intersecao(const Raio& r) override{
 
@@ -117,39 +91,16 @@ class Malha: public Objeto{
 
             return i;
         }
-
-        void transformacao() {
-            Matriz M = Matriz::identidade(4);
-            for(Matriz m:this->get_transformation()) M = M * m;
-
-            this->centro = (M * Matriz::vetor_para_matriz(this->centro, 1)).matriz_para_vetor();  
-
-            for(vetor *&vertice : this->vertices) {
-                vetor v = (M * Matriz::vetor_para_matriz(*vertice, 1)).matriz_para_vetor();  
-
-                vertice->x(v.x());
-                vertice->y(v.y()); 
-                vertice->z(v.z());
-                vertice->a(v.a());
-            }
-            
-            this->limpar_transformacao();
-        }
-
-        void atualizar_normal() {
-            for(Face * f: this->faces) f->calcula_normal();
-            for(Face * f: this->faces) f->normal = f->normal * this->get_invertida();
-        }
-
-        void atualizar_normal(Matriz M) {
-            for(Face * f: this->faces) f->normal = (~M * Matriz::vetor_para_matriz(f->normal, true)).matriz_para_vetor();
-        }
-
         
+        void transformacao(){}
+        void atualizar_normal(){}
+        void atualizar_normal(Matriz M){}
     public:
         vector<ponto> lista_vertices;
         vetor r1, r2;
         vetor normal;
+        vetor k_a, k_d, k_e;
+        int exp_especular;
 
 };
 

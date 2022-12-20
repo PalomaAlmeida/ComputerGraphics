@@ -20,20 +20,20 @@ Luz* Luz::luz_ambiente = new Luz();
 const double ASPECT_RATIO = 1.0/1.0;
 
 // Qtd pixels (divisão dos quadrados da "tela de mosquito")
-const int LARGURA_IMAGEM = 700;
+const int LARGURA_IMAGEM = 500;
 const int ALTURA_IMAGEM = (LARGURA_IMAGEM/ASPECT_RATIO);
 
 int main() {
 
     float matrizCores[LARGURA_IMAGEM * ALTURA_IMAGEM * 3];
     
-    SDLEngine sdlEngine{ "Árvore de Natal"
+    SDLEngine sdlEngine{ "Pracinha"
                     ,LARGURA_IMAGEM, ALTURA_IMAGEM
                     ,LARGURA_IMAGEM, ALTURA_IMAGEM
                   };
 
     // Origem (olho do observador)
-    auto origem = ponto(0, 0, 0);
+    auto origem = ponto(0, 0, 1);
 
     //Vfov (define um "zoom" para a camera) em graus
     double vfov = 90;
@@ -228,15 +228,16 @@ int main() {
                       
                       cout << "Digite a intensidade do ka: " << "\n";
                       cin  >> x >> y >> z;
-                      //ka(objeto_e_raiz_mais_proximas.first, x, y, z);
+                      objeto_e_raiz_mais_proximas.first->k_a = vetor(x,y,z);
 
                       cout << "Digite a intensidade do kd: " << "\n";
                       cin  >> x >> y >> z;
-                      //kd(objeto_e_raiz_mais_proximas.first, x, y, z);
+                      objeto_e_raiz_mais_proximas.first->k_d = vetor(x,y,z);
+                    
 
                       cout << "Digite a intensidade do ke: " << "\n";
                       cin  >> x >> y >> z;
-                      //ke(objeto_e_raiz_mais_proximas.first, x, y, z);
+                      objeto_e_raiz_mais_proximas.first->k_e = vetor(x,y,z);
 
                       cout << "Cor alterada com sucesso!" << "\n";
                       break;
@@ -274,11 +275,11 @@ int main() {
           cout << "Selecione uma das fontes de luz abaixo: " << "\n";
 
           for(Luz* luz: Luz::luzes){
-            cout << num_lights << " - Luz pontual " << "\n";
+            cout << num_lights << "\n";
             num_lights++;
           }
           
-          cout << num_lights <<  " - Luz ambiente " << "\n";
+          cout << num_lights << "\n";
           cin >> opcao_luz;
           
           if(opcao_luz < num_lights){

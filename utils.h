@@ -211,12 +211,17 @@ static void montarObjetosCenarioPraca(){
     //Luzes do cenário 
     Luz::luz_ambiente = new LuzAmbiente(vetor(0.3,0.3,0.3));
 
+    Luz::luzes.push_back(
+      new LuzPontual(ponto(-2.5,4,-2), vetor(0.3,0.3,0.3))
+    );
+
     /*Luz::luzes.push_back(
-      new LuzPontual(ponto(1,1,0), vetor(0.7,0.7,0.7))
+      new LuzSpot(ponto(0,0,0), vetor(0.7,0.7,0.7), 30, 10, vetor(0,0,-1))
     );*/
 
-    Luz::luzes.push_back(
-      new LuzSpot(ponto(0,0,0), vetor(0.7,0.7,0.7), 30, 10, vetor(0,0,-1))
+    //Fundo
+    Objeto::objetos.push_back( 
+      new Plano(ponto(-2,-1.5,-10), vetor(0,0,1), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), vetor(0.686,0.933,0.933), 1)
     );
 
     //Chão
@@ -226,37 +231,74 @@ static void montarObjetosCenarioPraca(){
 
     // Arvores
     Objeto::objetos.push_back(
-      new Cone(ponto(1.5,-0.1,-2), vetor(0,1,0), 1, 0.9, 1, vetor(0,1,1), vetor(0,1,0.498), vetor(0,1,0.498))
+      new Cone(ponto(2.5,-0.8,-2), vetor(0,1,0), 1, 0.9, 1, vetor(0,1,0.498), vetor(0,1,0.498), vetor(0,1,0.498))
     );
 
     Objeto::objetos.push_back(
-      new Cilindro(ponto(1.5,-0.6,-2), vetor(0,1,0), 0.9, 0.05, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
+      new Cilindro(ponto(2.5,-1.5,-2), vetor(0,1,0), 0.9, 0.05, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
     );
 
     Objeto::objetos.push_back(
-      new Cone(ponto(-1.5,-0.1,-2), vetor(0,1,0), 1, 0.9, 1, vetor(0,1,0.498), vetor(0,1,0.498), vetor(0,1,0.498))
+      new Cone(ponto(-2.5,-0.8,-2), vetor(0,1,0), 1, 0.9, 1, vetor(0,1,0.498), vetor(0,1,0.498), vetor(0,1,0.498))
     );
 
     Objeto::objetos.push_back(
-      new Cilindro(ponto(-1.5,-0.6, -2), vetor(0,1,0), 0.9, 0.05, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
+      new Cilindro(ponto(-2.5,-1.5, -2), vetor(0,1,0), 0.9, 0.05, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
     );
 
     //Fonte
-    //Cubo
-    Cubo* cubo = new Cubo(0.75, ponto(0,-1.5,-2), vetor(1,0.078,0.576),vetor(1,0.078,0.576),vetor(1,0.078,0.567), 100);
-
-    for(Malha* face: cubo->faces_cubo){
-      Objeto::objetos.push_back(face);
-    }
-
+    
+    //Agua
     Objeto::objetos.push_back(
-      new Cilindro(ponto(0,-0.9,-2), vetor(0,1,0), 0.5, 0.3, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
+      new Cubo(0.4, 2, 2.5, ponto(-0.1,-1.65,-2.4), vetor(170,213,219), vetor(170,213,219), vetor(170,213,219), 100)
+    );
+
+    //Parede frente fonte
+    Objeto::objetos.push_back(
+      new Cubo(0.6, 2, 0.2, ponto(-0.1,-1.65,-1.15), vetor(0.824, 0.706, 0.549),vetor(0.824, 0.706, 0.549),vetor(0.824, 0.706, 0.549), 100)
+    );
+
+    //Parede tras fonte
+    Objeto::objetos.push_back(
+      new Cubo(0.6, 2, 0.2, ponto(-0.1,-1.65,-3.0), vetor(0.824, 0.706, 0.549),vetor(0.824, 0.706, 0.549),vetor(0.824, 0.706, 0.549), 100)
+    );
+
+    //Parede esquerda fonte
+    Objeto::objetos.push_back(
+      new Cubo(0.6, 0.2, 2, ponto(-1.1,-1.65,-2.1), vetor(0.824, 0.706, 0.549),vetor(0.824, 0.706, 0.549),vetor(0.824, 0.706, 0.549), 100)
+    );
+
+    //Parede direita fonte
+    Objeto::objetos.push_back(
+      new Cubo(0.6, 0.2, 2, ponto(1,-1.65,-2.1), vetor(0.824, 0.706, 0.549),vetor(0.824, 0.706, 0.549),vetor(0.824, 0.706, 0.549), 100)
+    );
+    
+    //Cilindro fonte 1
+    Objeto::objetos.push_back(
+      new Cilindro(ponto(0,-1.65,-2.3), vetor(0,1,0), 0.9, 0.6, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
+    );
+
+    //Cilindro fonte 2
+    Objeto::objetos.push_back(
+      new Cilindro(ponto(0,-1.35,-2.3), vetor(0,1,0), 0.9, 0.4, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
+    );
+
+    //Post
+    Objeto::objetos.push_back(
+      new Cilindro(ponto(1.8,-1.6,-2), vetor(0,1,0), 1.9, 0.02, vetor(0.5, 0.708, 0.549), vetor(0.824, 0.708, 0.549), vetor(0.824, 0.705, 0.549), 1)
     );
 
     Objeto::objetos.push_back(
-      new Cilindro(ponto(0,-0.6,-2), vetor(0,1,0), 0.5, 0.2, vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), vetor(0.824, 0.706, 0.549), 1)
+      new Cone(ponto(1.8,0.3,-2), vetor(0,1,0), 0.2*(sqrt(3)), 0.2, 1, vetor(0.5, 0.708, 0.549), vetor(0.824, 0.708, 0.549), vetor(0.824, 0.705, 0.549))
     );
 
+    /*Objeto::objetos.push_back(
+      new Esfera(ponto(1.8,0.4,-2), 0.09, vetor(0.854, 0.647, 0.125), vetor(0.854, 0.647, 0.125), vetor(0.854, 0.647, 0.125), 1)
+    );*/
+    
+    Luz::luzes.push_back(
+      new LuzSpot(ponto(1.8,0.3,-2), vetor(1,1,1), 30, 10, vetor(0,-1,0))
+    );
 
 
 }
